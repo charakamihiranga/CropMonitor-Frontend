@@ -1,0 +1,76 @@
+button #crop-icon {
+  content: url('../img/menu/Corn-gray.png');
+}
+button:hover #crop-icon {
+  content: url('../img/menu/Corn.png');
+}
+
+button #settings-icon {
+  content: url('../img/menu/Settings-gray.png');
+}
+button:hover #settings-icon {
+  content: url('../img/menu/Settings.png');
+}
+
+button #vehicle-icon {
+  content: url('../img/menu/Tractor-gray.png');
+}
+button:hover #vehicle-icon {
+  content: url('../img/menu/Tractor.png');
+}
+
+button #equipment-icon {
+  content: url('../img/menu/tools-gray.png');
+}
+button:hover #equipment-icon {
+  content: url('../img/menu/Tools.png');
+}
+
+button #mlog-icon {
+  content: url('../img/menu/Clipboard-gray.png');
+}
+button:hover #mlog-icon {
+  content: url('../img/menu/Clipboard.png');
+}
+
+button #logout-icon {
+  content: url('../img/menu/logout-gray.png');
+}
+button:hover #logout-icon {
+  content: url('../img/menu/Logout.png');
+}
+
+
+button #field-icon {
+  content: url('../img/menu/Grass-gray.png');
+}
+button:hover #field-icon {
+  content: url('../img/menu/Grass.png');
+}
+
+
+button #staff-icon {
+  content: url('../img/menu/Team-gray.png');
+}
+button:hover #staff-icon {
+  content: url('../img/menu/Team.png');
+}
+
+button #home-icon {
+  content: url('../img/menu/Home-gray.png');
+}
+button:hover #home-icon {
+  content: url('../img/menu/Home.png');
+}
+
+
+ /* sidebar styles */
+.sidebar-hidden {
+    transform: translateX(-100%);
+  }
+  .sidebar-visible {
+    transform: translateX(0);
+  }
+  aside {
+    transition: transform 0.3s ease-in-out;
+  }
