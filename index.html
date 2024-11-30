@@ -1,13 +1,245 @@
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="icon" sizes="16x16" href="assets/img/favicon-16x16.png" />
+    <link rel="icon" sizes="32x32" href="assets/img/favicon-32x32.png" />
+    <link
+      rel="icon"
+      sizes="192x192"
+      href="assets/img/android-chrome-192x192.png"
+    />
+    <link rel="stylesheet" href="assets/css/general.css" />
+    <link rel="stylesheet" href="./assets/css/dashboard.css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Login</title>
-</head>
-<body>
-    <h1 class="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-</body>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+
+  <body class="bg-gray-100 h-screen flex flex-col poppins-regular">
+    <!-- Sidebar -->
+    <div class="flex h-full">
+      <aside
+        id="sidebar"
+        class="bg-white w-80 h-screen shadow-md fixed md:static z-20 sidebar-hidden md:translate-x-0"
+      >
+        <div class="p-4 flex justify-between items-center">
+          <img
+            src="assets/img/greenshadow.png"
+            alt="logo"
+            class="h-10 sm:h-4 md:h-10 lg:h-10 w-auto"
+          />
+
+          <button
+            id="close-sidebar"
+            class="md:hidden text-gray-500 hover:text-green-700 transform transition-transform duration-300 hover:scale-125"
+            onclick="toggleMenu()"
+          >
+            <i class="fas fa-times text-2xl"></i>
+          </button>
+        </div>
+        <nav class="p-4 mt-6">
+          <ul class="space-y-7 poppins-medium">
+            <!-- Home Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="home-icon"
+                  src="assets/img/menu/Home-gray.png"
+                  alt="Home Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base">Home</span>
+                <!-- Responsive text size -->
+              </button>
+            </li>
+            <!-- Staff Management Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="staff-icon"
+                  src="https://via.placeholder.com/20?text=P"
+                  alt="Staff Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base"
+                  >Staff Management</span
+                >
+              </button>
+            </li>
+            <!-- Field Management Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="field-icon"
+                  src="https://via.placeholder.com/20?text=S"
+                  alt="Field Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base"
+                  >Field Management</span
+                >
+              </button>
+            </li>
+            <!-- Crop Management Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="crop-icon"
+                  src="https://via.placeholder.com/20?text=S"
+                  alt="Crop Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base"
+                  >Crop Management</span
+                >
+              </button>
+            </li>
+            <!-- Monitoring Log Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="mlog-icon"
+                  src="https://via.placeholder.com/20?text=L"
+                  alt="Log Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base"
+                  >Monitoring Log</span
+                >
+              </button>
+            </li>
+            <!-- Equipment Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="equipment-icon"
+                  src="https://via.placeholder.com/20?text=L"
+                  alt="Equipment Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base">Equipment</span>
+              </button>
+            </li>
+            <!-- Vehicle Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="vehicle-icon"
+                  src="https://via.placeholder.com/20?text=L"
+                  alt="Vehicle Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base">Vehicle</span>
+              </button>
+            </li>
+            <!-- Settings Button -->
+            <li>
+              <button
+                class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="settings-icon"
+                  src="https://via.placeholder.com/20?text=L"
+                  alt="Settings Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base">Settings</span>
+              </button>
+            </li>
+          </ul>
+
+          <button
+            class="flex mt-[12vh] items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+          >
+            <img
+              id="logout-icon"
+              src="https://via.placeholder.com/20?text=L"
+              alt="Logout Icon"
+              class="mr-3 w-6 md:w-7 lg:w-8"
+            />
+            <span class="text-xs md:text-sm lg:text-base poppins-medium">Logout</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Content Section -->
+      <div class="flex-1 flex flex-col">
+        <header
+          class="bg-white shadow-md p-4 flex justify-between items-center"
+        >
+       
+        <div class="flex space-x-4">
+          <button
+            id="menu-toggle"
+            class="md:hidden text-gray-500 hover:text-green-700  transform transition-transform duration-300 hover:scale-125"
+          >
+            <i class="fa-solid fa-bars-staggered text-2xl focus:text-green-700"></i>
+          </button>
+          <div class="relative hidden md:block group">
+            <input
+              type="text"
+              placeholder="Search here..."
+              name="text"
+              class="w-[20vw] pl-10 pr-4 py-2 rounded-xl border border-2 border-gray-300 opacity-80 focus:opacity-100 focus:w-[24vw] transition-all duration-200 ease-in-out outline-none hover:border-green-500 focus:border-green-500 group-hover:border-green-500"
+            />
+            <i
+              class="fa fa-search absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600 focus:text-green-500 group-hover:text-green-500"
+            ></i>
+          </div>
+        </div>
+        
+        
+          <div class="flex items-center space-x-4 pr-4 group cursor-pointer">
+            <img
+              src="assets/img/default-profile.png"
+              alt="Profile"
+              class="w-10 h-10 rounded-full duration-150 group-hover:border-2 group-hover:border-green-500"
+            />
+            <div class="flex flex-col mr-4 group-hover:text-green-500">
+              <span
+                class="font-semibold text-sm md:text-base duration-300 group-hover:text-green-500"
+              >
+                Charaka Mihiranga
+              </span>
+              <p
+                class="text-xs text-gray-600 md:text-sm duration-300 group-hover:text-gray-500"
+              >
+                Manager
+              </p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1">
+          <div class="bg-white h-full">
+            <iframe src="https://example.com" class="w-full h-full"></iframe>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="./assets/js/dashboard.js"></script>
+  </body>
 </html>
