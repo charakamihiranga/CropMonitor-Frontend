@@ -1,3 +1,45 @@
+/* set button styles when active  */
+
+button.active {
+  color: #16a34a; 
+  border-left: 4px solid #16a34a; 
+}
+
+button.active {
+  background-color: #f3f4f6;
+}
+
+button.active #home-icon {
+  content: url('../img/menu/Home.png');
+}
+button.active #staff-icon {
+  content: url('../img/menu/Team.png');
+}
+button.active #field-icon {
+  content: url('../img/menu/Grass.png');
+}
+button.active #crop-icon {
+  content: url('../img/menu/Corn.png');
+}
+button.active #mlog-icon {
+  content: url('../img/menu/Clipboard.png');
+}
+button.active #equipment-icon {
+  content: url('../img/menu/Tools.png');
+}
+button.active #vehicle-icon {
+  content: url('../img/menu/Tractor.png');
+}
+button.active #logout-icon {
+  content: url('../img/menu/Logout.png');
+}
+button.active #settings-icon {
+  content: url('../img/menu/Logout.png');
+}
+
+
+
+/* set button styles when hover  */
 button #crop-icon {
   content: url('../img/menu/Corn-gray.png');
 }

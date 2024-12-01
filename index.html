@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Greenshadow</title>
     <link rel="icon" sizes="16x16" href="assets/img/favicon-16x16.png" />
     <link rel="icon" sizes="32x32" href="assets/img/favicon-32x32.png" />
     <link
@@ -19,7 +19,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
       crossorigin="anonymous"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
   </head>
 
   <body class="bg-gray-100 h-screen flex flex-col poppins-regular">
@@ -64,8 +64,10 @@
             <!-- Staff Management Button -->
             <li>
               <button
+                id="staff-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
-              >
+                onclick="setActiveButton('staff-btn')"
+                >
                 <img
                   id="staff-icon"
                   src="https://via.placeholder.com/20?text=P"
@@ -80,8 +82,10 @@
             <!-- Field Management Button -->
             <li>
               <button
+                id="field-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
-              >
+                onclick = "setActiveButton('field-btn')"
+                >
                 <img
                   id="field-icon"
                   src="https://via.placeholder.com/20?text=S"
@@ -192,9 +196,9 @@
         <div class="flex space-x-4">
           <button
             id="menu-toggle"
-            class="md:hidden text-gray-500 hover:text-green-700  transform transition-transform duration-300 hover:scale-125"
+            class="md:hidden text-gray-500 hover:text-green-700 transform transition-transform duration-300 hover:scale-125"
           >
-            <i class="fa-solid fa-bars-staggered text-2xl focus:text-green-700"></i>
+            <i class="fa-solid fa-bars-staggered text-2xl "></i>
           </button>
           <div class="relative hidden md:block group">
             <input
@@ -234,7 +238,7 @@
         <!-- Main Content -->
         <main class="flex-1">
           <div class="bg-white h-full">
-            <iframe src="https://example.com" class="w-full h-full"></iframe>
+            <iframe class="frame-container w-full h-full"></iframe>
           </div>
         </main>
       </div>
