@@ -2,12 +2,13 @@ import { getStaff } from "../model/StaffModel.js";
 
 // Variable to track the sorting direction (default is ascending)
 let ascending = true;
+let staffData = []; // Store all staff data for filtering
 
 // Function to set the staff data dynamically
-function setStaffData(staffData) {
+function setStaffData(filteredData) {
   const tableBody = $(".staff-table-body");
   tableBody.empty();
-  staffData.forEach((staff) => {
+  filteredData.forEach((staff) => {
     const row = $(`
     <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center bg-gray-100 poppins-medium text-xs sm:text-sm hover:bg-green-100 p-3 cursor-pointer rounded-lg mt-1 transition-all">
     <div class="p-2 truncate">${staff.firstName} ${staff.lastName}</div>
@@ -33,17 +34,29 @@ function setStaffData(staffData) {
   });
 }
 
-// Function to fetch all staff data and handle sorting
-async function getAllStaff() {
+// Function to fetch all staff data and handle sorting and filtering
+async function getAllStaff(searchTerm = '') {
   // Show the loader before starting to fetch data
   $("#loader").show(); // Show loader
 
-
   try {
     const data = await getStaff(); // Await the promise from getStaff
+    staffData = data; // Store the fetched data
 
-    // Sort data based on the current sorting direction
-    const sortedData = [...data].sort((a, b) => {
+    // Filter data based on the search term (matching firstName, lastName, email, and contactNo)
+    const filteredData = staffData.filter(staff => {
+      const fullName = `${staff.firstName} ${staff.lastName}`.toLowerCase();
+      const email = staff.email.toLowerCase();
+      const contactNo = staff.contactNo.toLowerCase();
+      
+      // Search for the term in firstName, lastName, email, or contactNo
+      return fullName.includes(searchTerm.toLowerCase()) ||
+             email.includes(searchTerm.toLowerCase()) ||
+             contactNo.includes(searchTerm.toLowerCase());
+    });
+
+    // Sort filtered data based on the current sorting direction
+    const sortedData = filteredData.sort((a, b) => {
       $("#loader").hide(); 
       if (ascending) {
         return a.firstName.localeCompare(b.firstName); // Ascending (A-Z)
@@ -52,20 +65,26 @@ async function getAllStaff() {
       }
     });
 
-    setStaffData(sortedData);
-
+    setStaffData(sortedData); // Update the table with sorted data
 
   } catch (error) {
     console.error("Error fetching staff data:", error);
   }
 }
 
+// Listen for messages from the parent window (dashboard)
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'SEARCH_UPDATE') {
+    const searchQuery = event.data.query; // Get the search query from the parent
+    getAllStaff(searchQuery); // Refetch and filter data based on the search term
+  }
+});
 
 $(document).ready(() => {
   // Load staff data initially with ascending sort order (default)
   getAllStaff();
 
-  // Handle sort button click event
+  // Handle sort button click event (same as before)
   $("#sort-arrow").click(() => {
     ascending = !ascending; // Toggle sorting direction
 
@@ -77,6 +96,6 @@ $(document).ready(() => {
     }
 
     // Refetch and sort data after toggling the direction
-    getAllStaff();
+    getAllStaff($("#search-bar").val()); // Include the current search value
   });
 });
