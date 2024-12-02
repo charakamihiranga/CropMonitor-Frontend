@@ -35,23 +35,31 @@ function setStaffData(staffData) {
 
 // Function to fetch all staff data and handle sorting
 async function getAllStaff() {
-  getStaff()
-    .then((data) => {
-      // Sort data based on the current sorting direction
-      const sortedData = [...data].sort((a, b) => {
-        if (ascending) {
-          return a.firstName.localeCompare(b.firstName); // Ascending (A-Z)
-        } else {
-          return b.firstName.localeCompare(a.firstName); // Descending (Z-A)
-        }
-      });
+  // Show the loader before starting to fetch data
+  $("#loader").show(); // Show loader
 
-      setStaffData(sortedData);
-    })
-    .catch((error) => {
-      console.error("Error fetching staff data:", error);
+
+  try {
+    const data = await getStaff(); // Await the promise from getStaff
+
+    // Sort data based on the current sorting direction
+    const sortedData = [...data].sort((a, b) => {
+      $("#loader").hide(); 
+      if (ascending) {
+        return a.firstName.localeCompare(b.firstName); // Ascending (A-Z)
+      } else {
+        return b.firstName.localeCompare(a.firstName); // Descending (Z-A)
+      }
     });
+
+    setStaffData(sortedData);
+
+
+  } catch (error) {
+    console.error("Error fetching staff data:", error);
+  }
 }
+
 
 $(document).ready(() => {
   // Load staff data initially with ascending sort order (default)

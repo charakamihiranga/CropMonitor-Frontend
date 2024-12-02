@@ -1,3 +1,29 @@
+ /* Loader Styles */
+ .loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-top: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 3px solid #16A34A;
+  border-left: 3px solid #16A34A;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+
 /* Change the width of the vertical scrollbar */
 .staff-table-body {
     overflow-y: scroll; /* Ensure scrollbar is visible */
