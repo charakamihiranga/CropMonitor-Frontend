@@ -1,3 +1,4 @@
+
 // Function to handle active button state
 function setActiveButton(buttonId) {
   // Reset all buttons to inactive state
@@ -15,6 +16,8 @@ function setActiveButton(buttonId) {
     activeIcon.attr('src', activeIcon.data('active')); // Set the active icon
   }
 }
+
+
 
 $(document).ready(function() {
   // Button click event for Staff Management
@@ -51,3 +54,5 @@ $(document).ready(function() {
   });
 
 });
+
+

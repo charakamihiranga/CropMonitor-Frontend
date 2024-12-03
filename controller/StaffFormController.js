@@ -99,3 +99,37 @@ $(document).ready(() => {
     getAllStaff($("#search-bar").val()); // Include the current search value
   });
 });
+
+const modal = document.getElementById("add-staff-modal");
+const modalContent = modal.querySelector(".bg-green-100");
+
+// Show modal with animation
+document
+  .querySelector(".bg-green-600")
+  .addEventListener("click", function () {
+    modal.classList.remove("hidden");
+    setTimeout(() => {
+      modal.classList.remove("opacity-0");
+      modalContent.classList.remove("scale-95");
+    }, 10); // Allow the browser to recognize the state change for animation
+  });
+
+// Close modal with animation
+document
+  .getElementById("close-modal")
+  .addEventListener("click", function () {
+    modal.classList.add("opacity-0");
+    modalContent.classList.add("scale-95");
+    setTimeout(() => modal.classList.add("hidden"), 300); // Wait for animation to finish
+  });
+
+// Close modal by clicking outside of it
+modal.addEventListener("click", function (e) {
+  if (e.target === this) {
+    modal.classList.add("opacity-0");
+    modalContent.classList.add("scale-95");
+    setTimeout(() => {
+      modal.classList.add("hidden");
+    }, 300);
+  }
+});

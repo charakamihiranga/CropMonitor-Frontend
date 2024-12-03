@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Staff Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/css/general.css" />
+    <link rel="stylesheet" href="../../assets/css/staffFrame.css" />
+    <script src="../../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body class="bg-gray-50 poppins-regular">
+    <div class="container mx-auto p-5">
+      <h1
+        class="text-xl sm:text-2xl font-semibold mb-8 text-center sm:text-left"
+      >
+        Staff Management
+      </h1>
+
+      <!-- Button Section -->
+      <div
+        class="flex flex-wrap justify-end sm:justify-end space-x-0 sm:space-x-4 mb-5"
+      >
+        <button
+          class="bg-green-600 text-white px-8 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm sm:text-base flex items-center space-x-2 group sm:w-auto"
+        >
+          <i
+            class="fa-solid fa-plus transition-transform transform group-hover:rotate-90"
+          ></i>
+          <span class="pl-2">Add</span>
+        </button>
+      </div>
+
+      <!-- Table Header -->
+      <div class="overflow-x-auto">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-6 gap-2 bg-[#16A34A] text-center font-semibold text-xs sm:text-sm text-white p-2 rounded-t-xl"
+        >
+          <div
+            class="p-2 truncate flex items-center justify-center group cursor-pointer"
+          >
+            <span>Name</span>
+            <i
+              id="sort-arrow"
+              class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"
+            ></i>
+          </div>
+
+          <div class="p-2 truncate">Designation</div>
+          <div class="p-2 hidden sm:block truncate">Email</div>
+          <div class="p-2 truncate">Contact Number</div>
+          <div class="p-2 truncate">Gender</div>
+          <div class="p-2 hidden sm:block">Actions</div>
+        </div>
+        <div class="h-[72vh] overflow-y-auto staff-table-body">
+          <div
+            id="loader"
+            class="flex items-center justify-center h-[72vh] w-full"
+          >
+            <div
+              class="w-10 h-10 border-4 border-t-4 border-green-500 border-t-transparent rounded-full animate-spin"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="add-staff-modal"
+      class="fixed inset-0 bg-opacity-50 flex  justify-center items-center hidden opacity-0 transition-opacity duration-300 ease-out"
+    >
+      <div
+        class="bg-green-100 rounded-lg p-8 w-full shadow-xl sm:w-[70vw] mr-[15%] mb-[5%] transform scale-95 transition-transform duration-300 ease-out"
+      >
+        <!-- Modal Header -->
+        <h1 class="text-center text-xl font-semibold mb-5">Add Staff Member</h1>
+
+        <!-- Modal Body -->
+        <div class="overflow-y-auto h-[60vh] p-2">
+          <!-- First Name and Last Name -->
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mt-10">
+            <div class="sm:col-span-3">
+              <label
+                for="first-name"
+                class="block text-sm font-medium text-gray-900"
+                >First name</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="first-name"
+                  id="first-name"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label
+                for="last-name"
+                class="block text-sm font-medium text-gray-900"
+                >Last name</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="last-name"
+                  id="last-name"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Designation and Gender -->
+          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label
+                for="designation"
+                class="block text-sm font-medium text-gray-900"
+                >Designation</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="designation"
+                  id="designation"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label
+                for="gender"
+                class="block text-sm font-medium text-gray-900"
+                >Gender</label
+              >
+              <div class="mt-2">
+                <select
+                  name="gender"
+                  id="gender"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Select Gender</option>
+                  <option value="MALE">MALE</option>
+                  <option value="FEMALE">FEMALE</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date of Birth and Contact Number -->
+          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label for="dob" class="block text-sm font-medium text-gray-900"
+                >Date of Birth</label
+              >
+              <div class="mt-2">
+                <input
+                  type="date"
+                  name="dob"
+                  id="dob"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label
+                for="contact-number"
+                class="block text-sm font-medium text-gray-900"
+                >Contact Number</label
+              >
+              <div class="mt-2">
+                <input
+                  type="tel"
+                  name="contact-number"
+                  id="contact-number"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Email and Role -->
+          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label for="email" class="block text-sm font-medium text-gray-900"
+                >Email</label
+              >
+              <div class="mt-2">
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label for="role" class="block text-sm font-medium text-gray-900"
+                >Role</label
+              >
+              <div class="mt-2">
+                <select
+                  name="role"
+                  id="role"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Select Role</option>
+                  <option value="MANAGER">MANAGER</option>
+                  <option value="ADMINISTRATIVE">ADMINISTRATIVE</option>
+                  <option value="SCIENTIST">SCIENTIST</option>
+                  <option value="OTHER">OTHER</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address Fields -->
+          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label
+                for="street-address"
+                class="block text-sm font-medium text-gray-900"
+                >Street Address</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="street-address"
+                  id="street-address"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label
+                for="address-line-2"
+                class="block text-sm font-medium text-gray-900"
+                >Address Line 2</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="address-line-2"
+                  id="address-line-2"
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Country, Province, City -->
+          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-2">
+              <label
+                for="country"
+                class="block text-sm font-medium text-gray-900"
+                >Country</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="country"
+                  id="country"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label
+                for="province"
+                class="block text-sm font-medium text-gray-900"
+                >Province</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="province"
+                  id="province"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="city" class="block text-sm font-medium text-gray-900"
+                >City</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="city"
+                  id="city"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Postal Code and Joined Date -->
+          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label
+                for="postal-code"
+                class="block text-sm font-medium text-gray-900"
+                >Postal Code</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="postal-code"
+                  id="postal-code"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label
+                for="joined-date"
+                class="block text-sm font-medium text-gray-900"
+                >Joined Date</label
+              >
+              <div class="mt-2">
+                <input
+                  type="date"
+                  name="joined-date"
+                  id="joined-date"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer (Buttons) -->
+        <div
+          class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 poppins-semibold"
+        >
+          <div class="sm:col-span-3">
+            <div class="mt-2">
+              <button
+                class="bg-green-600 w-full rounded-lg py-2 px-4 text-white hover:bg-green-700 focus:outline-none"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+          <div class="sm:col-span-3">
+            <div class="mt-2">
+              <button
+                id="close-modal"
+                class="bg-gray-300 w-full rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      type="module"
+      src="../../controller/StaffFormController.js"
+    ></script>
+  </body>
+</html>

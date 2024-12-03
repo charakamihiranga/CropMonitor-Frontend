@@ -31,23 +31,23 @@
   }
   
   /* Customizing the scrollbar */
-  .staff-table-body::-webkit-scrollbar {
-    width: 4px; /* Change this value to adjust the width of the scrollbar */
+  ::-webkit-scrollbar {
+    width: 0px; /* Change this value to adjust the width of the scrollbar */
   }
   
   /* Customizing the scrollbar track */
-  .staff-table-body::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     background-color: #f1f1f1; /* Change the background color of the track */
   }
   
   /* Customizing the scrollbar thumb */
-  .staff-table-body::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     background-color: #888; /* Change the color of the scrollbar thumb */
     border-radius: 10px; /* Optional: Adds rounded corners to the thumb */
   }
   
   /* Hover effect on the scrollbar thumb */
-  .staff-table-body::-webkit-scrollbar-thumb:hover {
+  ::-webkit-scrollbar-thumb:hover {
     background-color: #555; /* Change the color on hover */
   }
   
