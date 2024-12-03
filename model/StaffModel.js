@@ -1,17 +1,29 @@
-// API URL for the GET request
+import {getJwtTokenFromCookies} from "./AuthModel.js";
+
 const API_URL = "http://localhost:8080/cropmonitor/api/v1";
 
-// Define the function that gets staff data from the API
 export function getStaff() {
-  // Return the axios GET request
-  return axios.get(`${API_URL}/staff`)
-    .then(response => {
-      // Handle the response from the server
-      return response.data; // Returns the staff data
-    })
-    .catch(error => {
-      // Handle any error that occurs during the request
-      console.error('Error fetching staff data:', error);
-      throw error; // Throw the error to handle it in the controller
-    });
+  const token = getJwtTokenFromCookies(); // Get the JWT token from cookies
+
+  if (!token) {
+      console.error("JWT token not found in cookies.");
+      return;
+  }
+
+  // Return the jQuery AJAX GET request
+  return $.ajax({
+      url: `${API_URL}/staff`,
+      method: "GET",
+      headers: {
+          "Authorization": `Bearer ${token}`, // Include JWT token in the Authorization header
+      },
+      success: function(response) {
+          console.log("Staff data fetched successfully:", response);
+          return response;
+      },
+      error: function(error) {
+          console.error('Error fetching staff data:', error);
+          throw error;
+      }
+  });
 }
