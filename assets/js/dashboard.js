@@ -39,4 +39,15 @@ $(document).ready(function() {
   $('#close-sidebar').on('click', function() {
     $('#sidebar').toggleClass('sidebar-hidden sidebar-visible');
   });
+
+   // Search bar input event
+   $("#search-bar").on("input", function() {
+    const searchQuery = $(this).val(); // Get the current value of the search input
+
+    // Send the search query to the iframe
+    $(".frame-container").each(function() {
+      $(this)[0].contentWindow.postMessage({ type: 'SEARCH_UPDATE', query: searchQuery }, '*');
+    });
+  });
+
 });
