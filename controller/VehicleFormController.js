@@ -1,4 +1,5 @@
-import { getAllVehicleData } from "../model/VehicleModel.js";
+import { getAllVehicleData, addVehicle } from "../model/VehicleModel.js";
+import { getStaff } from "../model/StaffModel.js";
 $(document).ready(() => {
   let ascending = true;
   let vehicleData = [];
@@ -9,41 +10,92 @@ $(document).ready(() => {
     "#close-modal"
   );
 
+  // Add vehicle form submit event
+  $("#btn-save").on("click", async () => {
+    const vehicle = {
+      vehicleCategory: $("#vehicle-category").val(),
+      licensePlateNumber: $("#license-plate-number").val(),
+      fuelType: $("#fuel-type").val(),
+      status: $("#status").val().toLowerCase(),
+      staffId:
+        $("#allocated-staff").val() === "" ? null : $("#allocated-staff").val(),
+      remarks: $("#remarks").val(),
+    };
+
+    try {
+      let response = await addVehicle(vehicle);
+      if (response.status === 201) {
+        alert(response.message);
+        getAllVehicles();
+        addVehicleModal.close();
+        clearFields();
+      } else if (response.status === 409) {
+        alert(response.message);
+      }
+    } catch (error) {
+      alert("An error occurred while adding vehicle. Please try again.");
+    }
+  });
+
   // Add vehicle button click event
   $("#add-vehicle-btn").on("click", () => {
+    loadStaffDataToDropdown();
     addVehicleModal.open();
   });
 
+  async function loadStaffDataToDropdown() {
+    try {
+      const staffData = await getStaff();
+      const dropDown = $("#allocated-staff");
+      dropDown.empty();
+      dropDown.append(
+        `<option value="" disabled selected>Select Staff</option>`
+      );
+      staffData.forEach((staff) => {
+        const firstName = staff.firstName || "";
+        const lastName = staff.lastName || "";
+        const fullName = `${firstName} ${lastName}`.trim();
+        dropDown.append(
+          `<option value="${staff.staffId}">${fullName}</option>`
+        );
+      });
+    } catch (error) {
+      alert("Error loading staff data. Please try again.");
+    }
+  }
   // Fetch all vehicle data and handle sorting and filtering
   async function getAllVehicles(searchTerm = "") {
     $("#loader").show(); // Show loader
     try {
-      const data = await getAllVehicleData(); 
+      const data = await getAllVehicleData();
       vehicleData = data;
 
-    // Filter vehicle data based on search term
-const filteredVehicleData = vehicleData.filter((vehicle) => {
-    const category = vehicle.vehicleCategory?.toLowerCase() || "";
-    const licensePlate = vehicle.licensePlateNumber?.toLowerCase() || "";
-    const fuelType = vehicle.fuelType?.toLowerCase() || "";
-    const status = vehicle.status?.toLowerCase() || "";
+      // Filter vehicle data based on search term
+      const filteredVehicleData = vehicleData.filter((vehicle) => {
+        const category = vehicle.vehicleCategory?.toLowerCase() || "";
+        const licensePlate = vehicle.licensePlateNumber?.toLowerCase() || "";
+        const fuelType = vehicle.fuelType?.toLowerCase() || "";
+        const status = vehicle.status?.toLowerCase() || "";
 
-    // Handle staff name more safely, ensure "N/A" is lowercased only once
-    const staffName = vehicle.staff
-        ? `${vehicle.staff.firstName || ""} ${vehicle.staff.lastName || ""}`.toLowerCase()
-        : "n/a";
+        // Handle staff name more safely, ensure "N/A" is lowercased only once
+        const staffName = vehicle.staff
+          ? `${vehicle.staff.firstName || ""} ${
+              vehicle.staff.lastName || ""
+            }`.toLowerCase()
+          : "n/a";
 
-    return (
-        category.includes(searchTerm.toLowerCase()) ||
-        licensePlate.includes(searchTerm.toLowerCase()) ||
-        fuelType.includes(searchTerm.toLowerCase()) ||
-        status.includes(searchTerm.toLowerCase()) ||
-        staffName.includes(searchTerm.toLowerCase())
-    );
-});
+        return (
+          category.includes(searchTerm.toLowerCase()) ||
+          licensePlate.includes(searchTerm.toLowerCase()) ||
+          fuelType.includes(searchTerm.toLowerCase()) ||
+          status.includes(searchTerm.toLowerCase()) ||
+          staffName.includes(searchTerm.toLowerCase())
+        );
+      });
 
-
-      filteredVehicleData.sort((a, b) => a.vehicleCategory.localeCompare(b.vehicleCategory));
+      filteredVehicleData.sort((a, b) =>
+        a.vehicleCategory.localeCompare(b.vehicleCategory)
+      );
       setVehicleData(filteredVehicleData); // Update the table
       $("#loader").hide(); // Hide loader
     } catch (error) {
@@ -55,10 +107,10 @@ const filteredVehicleData = vehicleData.filter((vehicle) => {
   function setVehicleData(filteredData) {
     const tableBody = $(".vehicle-table-body");
     tableBody.empty();
-   
+
     filteredData.forEach((vehicle, index) => {
-        const staffName = vehicle.staff 
-        ? `${vehicle.staff.firstName || ""} ${vehicle.staff.lastName || ""}` 
+      const staffName = vehicle.staff
+        ? `${vehicle.staff.firstName || ""} ${vehicle.staff.lastName || ""}`
         : "N/A";
       const row = $(`
         <div class="table-row grid grid-cols-2 sm:grid-cols-6 gap-2 text-center bg-gray-100 poppins-medium text-xs sm:text-sm hover:bg-green-100 p-3 cursor-pointer rounded-lg mt-1 transition-all" data-index="${index}">
@@ -84,8 +136,8 @@ const filteredVehicleData = vehicleData.filter((vehicle) => {
     });
   }
 
-   // Sorting function
-   function sortVehicles(criteria) {
+  // Sorting function
+  function sortVehicles(criteria) {
     vehicleData.sort((a, b) => {
       let valueA = a[criteria].toLowerCase();
       let valueB = b[criteria].toLowerCase();
@@ -102,7 +154,6 @@ const filteredVehicleData = vehicleData.filter((vehicle) => {
     $("#sort-category").toggleClass("fa-sort-down fa-sort-up");
     sortVehicles("vehicleCategory");
   });
-
 
   $("#sort-status").on("click", () => {
     ascending = !ascending;
@@ -141,14 +192,19 @@ const filteredVehicleData = vehicleData.filter((vehicle) => {
     };
   }
 
-   // Listen for search bar updates from parent window (dashboard)
-   window.addEventListener("message", (event) => {
+  function clearFields() {
+    $(
+      "#vehicle-category, #license-plate-number, #fuel-type, #status, #allocated-staff, #remarks"
+    ).val("");
+  }
+
+  // Listen for search bar updates from parent window (dashboard)
+  window.addEventListener("message", (event) => {
     if (event.data.type === "SEARCH_UPDATE") {
       const searchQuery = event.data.query;
       getAllVehicles(searchQuery); // Refetch and filter data based on search term
     }
   });
-
 
   // initial function call
   getAllVehicles();

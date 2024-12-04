@@ -15,7 +15,6 @@ export function getAllVehicleData(){
             Authorization: `Bearer ${token}`,
         },
         success: function(response){
-            console.log(response);
             return response;
         },
         error: function(error){
@@ -24,3 +23,32 @@ export function getAllVehicleData(){
         },
     });
 };
+
+export function addVehicle(vehicleData){
+    const token = getJwtTokenFromCookies();
+    if(!token){
+        console.error("JWT token not found in cookies.");
+        return;
+    }
+    return $.ajax({
+        url: `${API_URL}`,
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        data: JSON.stringify(vehicleData),  
+    })
+    .then((response) => {
+        return {status: 201, message: "Vehicle added successfully"};
+    })
+    .catch((error) => {
+        let errorMessage = "An error occurred while adding vehicle. Please try again.";
+        if(error.status === 409){
+            errorMessage = "Vehicle already exists. Please use a different license plate number.";
+        } else if(error.responseJSON && error.responseJSON.message){
+            errorMessage = error.responseJSON.message;
+        }
+        return {status: error.status, message: errorMessage};
+    });
+}

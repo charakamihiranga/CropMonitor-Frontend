@@ -59,8 +59,8 @@ $(document).ready(() => {
       if (response.status === 201) {
         alert(response.message); // Success message
         getAllStaff(); // Refetch staff data
-        clearFields();
         addStaffModal.close();
+        clearFields(); 
       } else if (response.status === 409) {
         alert(response.message); // Email already exists
       }
