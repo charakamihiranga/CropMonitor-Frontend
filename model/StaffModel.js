@@ -49,7 +49,8 @@ export function addStaff(staffData) {
     })
     .catch((error) => {
       // Error handler - catch and handle error
-      let errorMessage = "An error occurred while adding staff. Please try again.";
+      let errorMessage =
+        "An error occurred while adding staff. Please try again.";
       if (error.status === 409) {
         errorMessage = "Email already exists. Please use a different email.";
       } else if (error.responseJSON && error.responseJSON.message) {
@@ -60,20 +61,20 @@ export function addStaff(staffData) {
 }
 
 export function updateStaffMember(staffId, updatedStaffObj) {
-  const token = getJwtTokenFromCookies();  
+  const token = getJwtTokenFromCookies();
   if (!token) {
     console.error("JWT token not found in cookies.");
     return;
   }
 
   return $.ajax({
-    url: `${API_URL}/staff/${staffId}`,  
-    method: "PATCH",                  
+    url: `${API_URL}/staff/${staffId}`,
+    method: "PATCH",
     headers: {
-      Authorization: `Bearer ${token}`,  
-      "Content-Type": "application/json", 
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
-    data: JSON.stringify(updatedStaffObj), 
+    data: JSON.stringify(updatedStaffObj),
   })
     .then((response, textStatus, jqXHR) => {
       if (jqXHR.status === 204) {
@@ -81,8 +82,8 @@ export function updateStaffMember(staffId, updatedStaffObj) {
       }
     })
     .catch((error) => {
-   
-      let errorMessage = "An error occurred while updating staff. Please try again.";
+      let errorMessage =
+        "An error occurred while updating staff. Please try again.";
 
       if (error.status === 404) {
         errorMessage = "Staff member not found.";
@@ -94,4 +95,35 @@ export function updateStaffMember(staffId, updatedStaffObj) {
     });
 }
 
+export function deleteStaffMember(staffId) {
+  const token = getJwtTokenFromCookies();
+  if (!token) {
+    console.error("JWT token not found in cookies.");
+    return { status: 401, message: "Unauthorized: JWT token not found." };
+  }
 
+  return $.ajax({
+    url: `${API_URL}/staff/${staffId}`,
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response, textStatus, jqXHR) => {
+      if (jqXHR.status === 204) {
+        return { status: 204, message: "Staff deleted successfully." };
+      }
+    })
+    .catch((error) => {
+      let errorMessage =
+        "An error occurred while deleting staff. Please try again.";
+
+      if (error.status === 404) {
+        errorMessage = "Staff member not found.";
+      } else if (error.responseJSON && error.responseJSON.message) {
+        errorMessage = error.responseJSON.message;
+      }
+
+      return { status: error.status, message: errorMessage };
+    });
+}

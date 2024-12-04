@@ -1,4 +1,4 @@
-import { getStaff, addStaff, updateStaffMember } from "../model/StaffModel.js";
+import { getStaff, addStaff, updateStaffMember, deleteStaffMember } from "../model/StaffModel.js";
 import { formatName } from "../assets/js/util.js";
 
 $(document).ready(() => {
@@ -17,6 +17,16 @@ $(document).ready(() => {
     "#update-staff-modal",
     "#update-icon",
     "#close-update-modal"
+  );
+  const viewStaffModal = setupModal(
+    "#view-staff-modal",
+    "#view-icon",
+    "#close-view-modal"
+  );
+  const deleteStaffModal = setupModal(
+    "#delete-staff-modal",
+    "#delete-icon",
+    "#close-delete-modal"
   );
 
   // Handle add staff form submission
@@ -61,7 +71,7 @@ $(document).ready(() => {
         getAllStaff();
         updateStaffModal.close();
         alert(response.message);
-      } 
+      }
     } catch (error) {
       alert("An unexpected error occurred. Please try again.");
     }
@@ -72,39 +82,38 @@ $(document).ready(() => {
     $("#loader").show(); // Show loader
 
     try {
-        const data = await getStaff();
-        staffData = data;
+      const data = await getStaff();
+      staffData = data;
 
-        // Filter staff data based on search term
-        filteredStaffData = staffData.filter((staff) => {
-            const fullName = `${staff.firstName} ${staff.lastName}`.toLowerCase();
-            const email = staff.email.toLowerCase();
-            const contactNo = staff.contactNo.toLowerCase();
-            const designation = staff.designation.toLowerCase();
-            return (
-                fullName.includes(searchTerm.toLowerCase()) ||
-                email.includes(searchTerm.toLowerCase()) ||
-                contactNo.includes(searchTerm.toLowerCase()) ||
-                designation.includes(searchTerm.toLowerCase())
-            );
-        });
+      // Filter staff data based on search term
+      filteredStaffData = staffData.filter((staff) => {
+        const fullName = `${staff.firstName} ${staff.lastName}`.toLowerCase();
+        const email = staff.email.toLowerCase();
+        const contactNo = staff.contactNo.toLowerCase();
+        const designation = staff.designation.toLowerCase();
+        return (
+          fullName.includes(searchTerm.toLowerCase()) ||
+          email.includes(searchTerm.toLowerCase()) ||
+          contactNo.includes(searchTerm.toLowerCase()) ||
+          designation.includes(searchTerm.toLowerCase())
+        );
+      });
 
-        // Sort filtered data based on the current sorting direction
-        const sortedData = filteredStaffData.sort((a, b) => {
-            $("#loader").hide();
-            if (ascending) {
-                return a.firstName.localeCompare(b.firstName); // Ascending (A-Z)
-            } else {
-                return b.firstName.localeCompare(a.firstName); // Descending (Z-A)
-            }
-        });
+      // Sort filtered data based on the current sorting direction
+      const sortedData = filteredStaffData.sort((a, b) => {
+        $("#loader").hide();
+        if (ascending) {
+          return a.firstName.localeCompare(b.firstName); // Ascending (A-Z)
+        } else {
+          return b.firstName.localeCompare(a.firstName); // Descending (Z-A)
+        }
+      });
 
-        setStaffData(sortedData); // Update the table with sorted data
+      setStaffData(sortedData); // Update the table with sorted data
     } catch (error) {
-        console.error("Error fetching staff data:", error);
+      console.error("Error fetching staff data:", error);
     }
-}
-
+  }
 
   // Dynamically set staff data into the table
   function setStaffData(filteredData) {
@@ -119,14 +128,14 @@ $(document).ready(() => {
         <div class="p-2 truncate">${staff.contactNo}</div>
         <div class="p-2 truncate">${staff.gender}</div>
         <div class="p-2 flex justify-center space-x-0 sm:space-x-2 md:space-x-2 lg:space-x-6 text-[#183153]">
-          <button class="px-4 sm:px-2 text-gray-500 rounded-lg transition-all">
-            <i class="fa fa-eye hover:text-green-500"></i>
+          <button id="view-icon" class="px-4 sm:px-2 text-gray-500 rounded-lg transition-all">
+            <i class="fa fa-eye text-base hover:text-green-500"></i>
           </button>
           <button id="update-icon" class="px-4 sm:px-2 text-gray-500 rounded-lg transition-all">
-            <i class="fa-solid fa-pen hover:text-green-500"></i>
+            <i class="fa-solid fa-pen text-base hover:text-orange-500"></i>
           </button>
-          <button class="px-4 sm:px-2 text-gray-500 rounded-lg transition-all">
-            <i class="fa-solid fa-trash hover:text-green-500"></i>
+          <button id="delete-icon" class="px-4 sm:px-2 text-gray-500 rounded-lg transition-all">
+            <i class="fa-solid fa-trash text-base hover:text-red-500"></i>
           </button>
         </div>
       </div>
@@ -139,7 +148,6 @@ $(document).ready(() => {
   $(document).on("click", "#update-icon", function () {
     const rowIndex = $(this).closest(".table-row").data("index"); // Get row index of filtered data
     const staff = filteredStaffData[rowIndex]; // Use filtered staff data instead of unfiltered
-    console.log(staff); // Log the staff object
     $("#updated-first-name").val(staff.firstName);
     $("#updated-last-name").val(staff.lastName);
     $("#updated-email").val(staff.email);
@@ -161,27 +169,89 @@ $(document).ready(() => {
     updateStaffModal.open(); // Open update modal
 
     $("#btn-update").on("click", () => {
-        const updatedStaff = {
-            firstName: formatName($("#updated-first-name").val()),
-            lastName: formatName($("#updated-last-name").val()),
-            email: $("#updated-email").val().toLowerCase(),
-            designation: $("#updated-designation").val().toUpperCase(),
-            contactNo: $("#updated-contact-number").val(),
-            dob: $("#updated-dob").val(),
-            role: $("#updated-role").val().toUpperCase(),
-            addressLine01: $("#updated-street-address").val(),
-            addressLine02: $("#updated-address-line-2").val(),
-            addressLine03: $("#updated-city").val(),
-            addressLine04: $("#updated-province").val(),
-            addressLine05:
-                $("#updated-country").val() + " " + $("#updated-postal-code").val(),
-            gender: staff.gender,
-            joinedDate: staff.joinedDate,
-        };
-        updateStaff(staff.staffId, updatedStaff);
+      const updatedStaff = {
+        firstName: formatName($("#updated-first-name").val()),
+        lastName: formatName($("#updated-last-name").val()),
+        email: $("#updated-email").val().toLowerCase(),
+        designation: $("#updated-designation").val().toUpperCase(),
+        contactNo: $("#updated-contact-number").val(),
+        dob: $("#updated-dob").val(),
+        role: $("#updated-role").val().toUpperCase(),
+        addressLine01: $("#updated-street-address").val(),
+        addressLine02: $("#updated-address-line-2").val(),
+        addressLine03: $("#updated-city").val(),
+        addressLine04: $("#updated-province").val(),
+        addressLine05:
+          $("#updated-country").val() + " " + $("#updated-postal-code").val(),
+        gender: staff.gender,
+        joinedDate: staff.joinedDate,
+      };
+      updateStaff(staff.staffId, updatedStaff);
     });
-});
+  });
 
+  // Handle 'view-icon' button click event or row click to open the "view staff" modal
+  $(document).on("click", "#view-icon", function (event) {
+    // Check if the click is on the eye icon or anywhere on the row (excluding the buttons)
+    const rowIndex = $(this).closest(".table-row").data("index"); // Get row index of filtered data
+    const staff = filteredStaffData[rowIndex]; // Use filtered staff data instead of unfiltered
+
+    if (
+      $(event.target).closest("#view-icon").length ||
+      $(event.target).closest(".table-row").length
+    ) {
+      // If clicked on the "view icon" or anywhere on the row
+      // Populate the view staff modal with the staff's data
+      $("#view-first-name").val(staff.firstName);
+      $("#view-last-name").val(staff.lastName);
+      $("#view-email").val(staff.email);
+      $("#view-designation").val(staff.designation);
+      $("#view-contact-number").val(staff.contactNo);
+      $("#view-gender").val(staff.gender);
+      const formattedDob = new Date(staff.dob).toISOString().split("T")[0];
+      $("#view-dob").val(formattedDob);
+      const joinedDate = new Date(staff.joinedDate).toISOString().split("T")[0];
+      $("#view-joined-date").val(joinedDate);
+      $("#view-role").val(staff.role);
+      $("#view-street-address").val(staff.addressLine01);
+      $("#view-address-line-2").val(staff.addressLine02);
+      $("#view-city").val(staff.addressLine03);
+      $("#view-province").val(staff.addressLine04);
+      const addressParts = staff.addressLine05.split(" ");
+      const country = addressParts.slice(0, -1).join(" ");
+      const postalCode = addressParts.slice(-1)[0];
+      $("#view-country").val(country);
+      $("#view-postal-code").val(postalCode);
+
+      viewStaffModal.open(); // Open the view staff modal
+    }
+  });
+
+  // Handle 'delete-icon' button click event
+
+  $(document).on("click", "#delete-icon", function (event) {
+    const rowIndex = $(this).closest(".table-row").data("index");
+    const staff = filteredStaffData[rowIndex];
+    $("#delete-name").text(staff.firstName);
+    deleteStaffModal.open();
+
+    $("#btn-delete").on("click", async () => {
+      deleteStaff(staff.staffId);
+    });
+  });
+
+  async function deleteStaff(staffId) {
+    try {
+      let response = await deleteStaffMember(staffId);
+      if (response.status === 204) {
+        getAllStaff();
+        deleteStaffModal.close();
+        alert(response.message);
+      }
+    } catch (error) {
+      alert("An unexpected error occurred. Please try again.");
+    }
+  }
 
   // Listen for search bar updates from parent window (dashboard)
   window.addEventListener("message", (event) => {
