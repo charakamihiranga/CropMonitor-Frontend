@@ -1,4 +1,9 @@
-import { getStaff, addStaff, updateStaffMember, deleteStaffMember } from "../model/StaffModel.js";
+import {
+  getStaff,
+  addStaff,
+  updateStaffMember,
+  deleteStaffMember,
+} from "../model/StaffModel.js";
 import { formatName } from "../assets/js/util.js";
 
 $(document).ready(() => {
@@ -266,12 +271,48 @@ $(document).ready(() => {
     addStaffModal.open(); // Open the add staff modal
   });
 
-  // Handle sorting direction toggle and refetch sorted staff data
+  // handle sorting of staff data
   $("#sort-arrow").click(() => {
     ascending = !ascending;
     $("#sort-arrow").toggleClass("fa-sort-down fa-sort-up");
     getAllStaff($("#search-bar").val()); // Refetch staff with the current search value
   });
+
+  $("#sort-arrow-designation").click(() => {
+    ascending = !ascending;
+    $("#sort-arrow-designation").toggleClass("fa-sort-down fa-sort-up");
+    sortByDesignation(); // Sort staff by designation
+  });
+
+  $("#sort-arrow-gender").click(() => {
+    ascending = !ascending;
+    $("#sort-arrow-gender").toggleClass("fa-sort-down fa-sort-up");
+    sortByGender(); // Sort staff by gender
+  });
+
+  // Sort staff by Designation
+  function sortByDesignation() {
+    const sortedData = filteredStaffData.toSorted((a, b) => {
+      if (ascending) {
+        return a.designation.localeCompare(b.designation); // Ascending (A-Z)
+      } else {
+        return b.designation.localeCompare(a.designation); // Descending (Z-A)
+      }
+    });
+    setStaffData(sortedData);
+  }
+
+  // Sort staff by Gender
+  function sortByGender() {
+    const sortedData = filteredStaffData.toSorted((a, b) => {
+      if (ascending) {
+        return a.gender.localeCompare(b.gender); // Ascending (A-Z)
+      } else {
+        return b.gender.localeCompare(a.gender); // Descending (Z-A)
+      }
+    });
+    setStaffData(sortedData);
+  }
 
   // Initial data fetchings
   getAllStaff();

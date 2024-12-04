@@ -40,36 +40,32 @@
 
       <!-- Table Header -->
       <div class="overflow-x-auto">
-        <div
-          class="grid grid-cols-2 sm:grid-cols-6 gap-2 bg-[#16A34A] text-center font-semibold text-xs sm:text-sm text-white p-2 rounded-t-xl"
-        >
-          <div
-            class="p-2 truncate flex items-center justify-center group cursor-pointer"
-          >
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 bg-[#16A34A] text-center font-semibold text-xs sm:text-sm text-white p-2 rounded-t-xl">
+          <div class="p-2 truncate flex items-center justify-center group cursor-pointer">
             <span>Name</span>
-            <i
-              id="sort-arrow"
-              class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"
-            ></i>
+            <i id="sort-arrow" class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"></i>
           </div>
-
-          <div class="p-2 truncate">Designation</div>
+      
+          <div class="p-2 truncate flex items-center justify-center group cursor-pointer">
+            <span>Designation</span>
+            <i id="sort-arrow-designation" class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"></i>
+          </div>
+      
           <div class="p-2 hidden sm:block truncate">Email</div>
           <div class="p-2 truncate">Contact Number</div>
-          <div class="p-2 truncate">Gender</div>
+          <div class="p-2 truncate flex items-center justify-center group cursor-pointer">
+            <span>Gender</span>
+            <i id="sort-arrow-gender" class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"></i>
+          </div>
           <div class="p-2 hidden sm:block">Actions</div>
         </div>
         <div class="h-[72vh] overflow-y-auto staff-table-body">
-          <div
-            id="loader"
-            class="flex items-center justify-center h-[72vh] w-full"
-          >
-            <div
-              class="w-10 h-10 border-4 border-t-4 border-green-500 border-t-transparent rounded-full animate-spin"
-            ></div>
+          <div id="loader" class="flex items-center justify-center h-[72vh] w-full">
+            <div class="w-10 h-10 border-4 border-t-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         </div>
       </div>
+      
     </div>
     <!-- Add Staff Modal -->
     <div
