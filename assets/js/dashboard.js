@@ -26,6 +26,12 @@ $(document).ready(function() {
     $(".frame-container").attr("src", "view/pages/StaffManagementFrame.html");
     setActiveButton("staff"); // Set staff button as active
   });
+  $("#vehicle-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/VehicleManagementFrame.html");
+    setActiveButton("vehicle"); 
+  });
+
 
 
   // Add more buttons if needed

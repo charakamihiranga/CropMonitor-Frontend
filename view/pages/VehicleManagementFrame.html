@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/css/general.css" />
+    <script src="../../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body class="bg-gray-50 poppins-regular">
+    <div class="container mx-auto p-5">
+        <h1
+        class="text-xl sm:text-2xl font-semibold mb-8 text-center sm:text-left"
+      >
+        Vehicle Management
+      </h1>
+
+      <!-- Button Section -->
+      <div
+        class="flex flex-wrap justify-end sm:justify-end space-x-0 sm:space-x-4 mb-5"
+      >
+        <button
+          id="add-vehicle-btn"
+          class="bg-green-600 text-white px-8 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm sm:text-base flex items-center space-x-2 group sm:w-auto"
+        >
+          <i
+            class="fa-solid fa-plus transition-transform transform group-hover:rotate-90"
+          ></i>
+          <span class="pl-2">Add</span>
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <!-- Table Header -->
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 bg-green-600 text-center font-semibold text-xs sm:text-sm text-white p-2 rounded-t-xl">
+          <div class="p-2 truncate flex items-center justify-center group cursor-pointer">
+            <span>Category</span>
+            <i id="sort-category" class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"></i>
+          </div>
+        
+            <div class="p-2 sm:block">License Plate Number</div>
+           
+          <div class="p-2 hidden sm:block truncate">Fuel Type</div>
+          <div class="p-2 truncate flex items-center justify-center group cursor-pointer">
+            <span>Status</span>
+            <i id="sort-status" class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"></i>
+          </div>
+          <div class="p-2 sm:block">Allocated Employee</div>
+          <div class="p-2 hidden sm:block">Actions</div>
+        </div>
+      
+        <!-- Table Body -->
+        <div class="h-[72vh] overflow-y-auto vehicle-table-body">
+          <div id="loader" class="flex items-center justify-center h-full">
+            <div class="w-10 h-10 border-4 border-t-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        </div>
+      </div>
+
+     <!-- Add Vehicle Modal -->
+<div
+id="add-vehicle-modal"
+class="fixed inset-0 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-300 ease-out"
+>
+<div
+  class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[50vw] mr-[18vw] mb-[10vh] transform scale-95 transition-transform duration-300 ease-out"
+>
+  <!-- Modal Header -->
+  <h1 class="text-center text-xl font-semibold mb-5">Add Vehicle</h1>
+
+  <!-- Modal Body -->
+  <div class="overflow-y-auto h-[60vh] p-4">
+    <!-- Vehicle Category -->
+    <div class="mb-6">
+      <label
+        for="vehicle-category"
+        class="block text-sm font-medium text-gray-900"
+        >Vehicle Category</label
+      >
+      <input
+        type="text"
+        name="vehicle-category"
+        id="vehicle-category"
+        required
+        class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+      />
+    </div>
+
+    <!-- License Plate Number -->
+    <div class="mb-6">
+      <label
+        for="license-plate-number"
+        class="block text-sm font-medium text-gray-900"
+        >License Plate Number</label
+      >
+      <input
+        type="text"
+        name="license-plate-number"
+        id="license-plate-number"
+        required
+        class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+      />
+    </div>
+
+    <!-- Fuel Type -->
+    <div class="mb-6">
+      <label for="fuel-type" class="block text-sm font-medium text-gray-900"
+        >Fuel Type</label
+      >
+      <select
+        name="fuel-type"
+        id="fuel-type"
+        required
+        class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+      >
+        <option value="" disabled selected>Select Fuel Type</option>
+        <option value="PETROL">PETROL</option>
+        <option value="DIESEL">DIESEL</option>
+        <option value="ELECTRIC">ELECTRIC</option>
+        <option value="HYBRID">HYBRID</option>
+      </select>
+    </div>
+
+    <!-- Status -->
+    <div class="mb-6">
+      <label for="status" class="block text-sm font-medium text-gray-900">
+        Status
+      </label>
+      <select
+        name="status"
+        id="status"
+        required
+        class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+      >
+        <option value="AVAILABLE">AVAILABLE</option>
+        <option value="NOT AVAILABLE">NOT AVAILABLE</option>
+      </select>
+    </div>
+
+    <!-- Remarks -->
+    <div class="mb-6">
+      <label for="remarks" class="block text-sm font-medium text-gray-900">
+        Remarks
+      </label>
+      <textarea
+        name="remarks"
+        id="remarks"
+        rows="4"
+        class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+      ></textarea>
+    </div>
+
+    <!-- Allocated Staff -->
+    <div class="mb-6">
+      <label
+        for="allocated-staff"
+        class="block text-sm font-medium text-gray-900"
+        >Allocated Staff</label
+      >
+      <select
+        name="allocated-staff"
+        id="allocated-staff"
+        required
+        class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+      >
+        <option value="" disabled selected>Select Staff Member</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Modal Footer -->
+  <div class="mt-8 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+    <div class="sm:col-span-3">
+      <button
+        id="save-btn"
+        class="bg-green-600 w-full rounded-lg py-2 text-white hover:bg-green-700 focus:outline-none"
+      >
+        Save
+      </button>
+    </div>
+    <div class="sm:col-span-3">
+      <button
+        id="close-modal"
+        class="bg-gray-300 w-full rounded-lg py-2 text-black hover:bg-gray-400 focus:outline-none"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+<script type="module" src="../../controller/VehicleFormController.js"></script>
+  </body>
+</html>
