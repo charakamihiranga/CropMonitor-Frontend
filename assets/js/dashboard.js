@@ -21,7 +21,8 @@ function setActiveButton(buttonId) {
 
 $(document).ready(function() {
   // Button click event for Staff Management
-  $("#staff-btn").on("click", function() {
+  $("#staff-btn").on("click", function(event) {
+    event.preventDefault();
     $(".frame-container").attr("src", "view/pages/StaffManagementFrame.html");
     setActiveButton("staff"); // Set staff button as active
   });
