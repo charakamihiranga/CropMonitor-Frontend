@@ -107,3 +107,59 @@
   font-weight: 900;
   font-style: italic;
 }
+
+ /* loading bar styles */
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-top: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 3px solid #16A34A;
+  border-left: 3px solid #16A34A;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+
+
+/* Change the width of the vertical scrollbar */
+.table-scroll {
+  overflow-y: scroll; /* Ensure scrollbar is visible */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+/* Customizing the scrollbar */
+::-webkit-scrollbar {
+  width: 0px; /* Change this value to adjust the width of the scrollbar */
+}
+
+/* Customizing the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Change the background color of the track */
+}
+
+/* Customizing the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Change the color of the scrollbar thumb */
+  border-radius: 10px; /* Optional: Adds rounded corners to the thumb */
+}
+
+/* Hover effect on the scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Change the color on hover */
+}
+
