@@ -1,13 +1,24 @@
-import { getAllVehicleData, addVehicle } from "../model/VehicleModel.js";
+import {
+  getAllVehicleData,
+  addVehicle,
+  updateVehicle,
+} from "../model/VehicleModel.js";
 import { getStaff } from "../model/StaffModel.js";
 $(document).ready(() => {
   let ascending = true;
   let vehicleData = [];
+  let filteredVehicleData = [];
 
   const addVehicleModal = setupModal(
     "#add-vehicle-modal",
     "#save-btn",
     "#close-modal"
+  );
+
+  const updateVehicleModal = setupModal(
+    "#update-vehicle-modal",
+    "#update-btn",
+    "#close-update-modal"
   );
 
   // Add vehicle form submit event
@@ -29,8 +40,6 @@ $(document).ready(() => {
         getAllVehicles();
         addVehicleModal.close();
         clearFields();
-      } else if (response.status === 409) {
-        alert(response.message);
       }
     } catch (error) {
       alert("An error occurred while adding vehicle. Please try again.");
@@ -43,26 +52,79 @@ $(document).ready(() => {
     addVehicleModal.open();
   });
 
-  async function loadStaffDataToDropdown() {
+  async function loadStaffDataToDropdown(selectedStaffId = null) {
+
     try {
       const staffData = await getStaff();
-      const dropDown = $("#allocated-staff");
-      dropDown.empty();
-      dropDown.append(
-        `<option value="" disabled selected>Select Staff</option>`
-      );
-      staffData.forEach((staff) => {
-        const firstName = staff.firstName || "";
-        const lastName = staff.lastName || "";
-        const fullName = `${firstName} ${lastName}`.trim();
+
+      const dropDowns = ["#allocated-staff", "#updated-allocated-staff"];
+      dropDowns.forEach((dropDownSelector) => {
+        const dropDown = $(dropDownSelector);
+        dropDown.empty();
         dropDown.append(
-          `<option value="${staff.staffId}">${fullName}</option>`
+          '<option value="" disabled selected>Select Staff</option>'
         );
+
+        staffData.forEach((staff) => {
+          const fullName = `${staff.firstName || ""} ${
+            staff.lastName || ""
+          }`.trim();
+          const selected = staff.staffId === selectedStaffId ? "selected" : "";
+          dropDown.append(
+            `<option value="${staff.staffId}" ${selected}>${fullName}</option>`
+          );
+        });
       });
     } catch (error) {
       alert("Error loading staff data. Please try again.");
     }
   }
+  // Update vehicle button click event
+  $(document).on("click", "#update-icon", function () {
+    const rowIndex = $(this).closest(".table-row").data("index");
+    const vehicle = filteredVehicleData[rowIndex];
+
+    // Populate modal fields with vehicle data
+    $("#updated-vehicle-category").val(vehicle.vehicleCategory);
+    $("#updated-license-plate-number").val(vehicle.licensePlateNumber);
+    $("#updated-fuel-type").val(vehicle.fuelType);
+    $("#updated-status").val(vehicle.status);
+    $("#updated-remarks").val(vehicle.remarks);
+
+    // Populate staff dropdown
+    const selectedStaffId = vehicle.staff ? vehicle.staff.staffId : null;
+    loadStaffDataToDropdown(selectedStaffId);
+
+    // Open update modal
+    updateVehicleModal.open();
+
+    // Update vehicle on save
+    $("#btn-update").on("click", async () => {
+      const updatedVehicle = {
+        vehicleCategory: $("#updated-vehicle-category").val(),
+        licensePlateNumber: $("#updated-license-plate-number").val(),
+        fuelType: $("#updated-fuel-type").val(),
+        status: $("#updated-status").val().toLowerCase(),
+        staffId: $("#updated-allocated-staff").val() || null,
+        remarks: $("#updated-remarks").val(),
+      };
+
+      try {
+        const response = await updateVehicle(vehicle.vehicleCode, updatedVehicle);
+
+        if (response.status === 204) {
+          getAllVehicles();
+          alert(response.message);
+          updateVehicleModal.close();
+        }
+      } catch (error) {
+        alert(
+          "An error occurred while updating the vehicle. Please try again."
+        );
+      }
+    });
+  });
+
   // Fetch all vehicle data and handle sorting and filtering
   async function getAllVehicles(searchTerm = "") {
     $("#loader").show(); // Show loader
@@ -71,7 +133,7 @@ $(document).ready(() => {
       vehicleData = data;
 
       // Filter vehicle data based on search term
-      const filteredVehicleData = vehicleData.filter((vehicle) => {
+      filteredVehicleData = vehicleData.filter((vehicle) => {
         const category = vehicle.vehicleCategory?.toLowerCase() || "";
         const licensePlate = vehicle.licensePlateNumber?.toLowerCase() || "";
         const fuelType = vehicle.fuelType?.toLowerCase() || "";
@@ -93,12 +155,17 @@ $(document).ready(() => {
         );
       });
 
-      filteredVehicleData.sort((a, b) =>
-        a.vehicleCategory.localeCompare(b.vehicleCategory)
-      );
-      setVehicleData(filteredVehicleData); // Update the table
-      $("#loader").hide(); // Hide loader
+      const sortedData = filteredVehicleData.sort((a, b) => {
+        $("#loader").hide();
+        if (ascending) {
+          return a.vehicleCategory.localeCompare(b.vehicleCategory);
+        } else {
+          return b.vehicleCategory.localeCompare(a.vehicleCategory);
+        }
+      });
+      setVehicleData(sortedData); // Update the table
     } catch (error) {
+      console.log("dk");
       console.error("Error fetching vehicle data:", error);
     }
   }
@@ -138,14 +205,14 @@ $(document).ready(() => {
 
   // Sorting function
   function sortVehicles(criteria) {
-    vehicleData.sort((a, b) => {
+    const sortedData = filteredVehicleData.toSorted((a, b) => {
       let valueA = a[criteria].toLowerCase();
       let valueB = b[criteria].toLowerCase();
       return ascending
         ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     });
-    setVehicleData(vehicleData);
+    setVehicleData(sortedData);
   }
 
   // Event Listeners for Sorting Headers
