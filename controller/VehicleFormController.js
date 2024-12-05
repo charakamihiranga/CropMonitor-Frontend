@@ -17,9 +17,49 @@ $(document).ready(() => {
 
   const updateVehicleModal = setupModal(
     "#update-vehicle-modal",
-    "#update-btn",
+    "#update-icon",
     "#close-update-modal"
   );
+
+  const viewVehicleModal = setupModal(
+    "#view-vehicle-modal",
+    "#view-icon",
+    "#close-view-modal"
+  );
+
+  // view Vehicle Modal
+
+  function setViewData(vehicle) {
+    console.log("vehicle: ", vehicle);
+
+    $("#view-vehicle-category").val(vehicle.vehicleCategory || "N/A");
+    $("#view-license-plate-number").val(vehicle.licensePlateNumber || "N/A");
+    $("#view-fuel-type").html(
+      `<option value="" disabled selected>${vehicle.fuelType}</option>`
+    );
+    $("#view-status").html(
+      `<option value="" disabled selected>${vehicle.status}</option>`
+    );
+    $("#view-remarks").val(vehicle.remarks || "N/A");
+
+    // Handling allocated staff display
+    const staffName = vehicle.staff
+      ? `${vehicle.staff.firstName || ""} ${
+          vehicle.staff.lastName || ""
+        }`.trim()
+      : "Not Allocated";
+    $("#view-allocated-staff").html(
+      `<option value="" disabled selected>${staffName}</option>`
+    );
+  }
+
+  $(document).on("click", "#view-icon", function () {
+    const rowIndex = $(this).closest(".table-row").data("index");
+    const vehicle = filteredVehicleData[rowIndex];
+
+    setViewData(vehicle); // Set data in the view modal
+    viewVehicleModal.open();
+  });
 
   // Add vehicle form submit event
   $("#btn-save").on("click", async () => {
@@ -53,7 +93,6 @@ $(document).ready(() => {
   });
 
   async function loadStaffDataToDropdown(selectedStaffId = null) {
-
     try {
       const staffData = await getStaff();
 
@@ -110,7 +149,10 @@ $(document).ready(() => {
       };
 
       try {
-        const response = await updateVehicle(vehicle.vehicleCode, updatedVehicle);
+        const response = await updateVehicle(
+          vehicle.vehicleCode,
+          updatedVehicle
+        );
 
         if (response.status === 204) {
           getAllVehicles();
@@ -165,7 +207,6 @@ $(document).ready(() => {
       });
       setVehicleData(sortedData); // Update the table
     } catch (error) {
-      console.log("dk");
       console.error("Error fetching vehicle data:", error);
     }
   }
