@@ -367,139 +367,192 @@
       </div>
     </div>
 
-
     <!-- view vehical modal -->
     <div
-    id="view-vehicle-modal"
-    class="fixed inset-0 bg-opacity-50 flex justify-center items-center hidden opacity-0  transition-opacity duration-300 ease-out"
-  >
-    <div
-      class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[50vw] mr-[18vw] mb-[10vh] transform scale-95 transition-transform duration-300 ease-out"
+      id="view-vehicle-modal"
+      class="fixed inset-0 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-300 ease-out"
     >
-      <!-- Modal Header -->
-      <h1 class="text-center text-xl font-semibold mb-5">Vehicle Details</h1>
+      <div
+        class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[50vw] mr-[18vw] mb-[10vh] transform scale-95 transition-transform duration-300 ease-out"
+      >
+        <!-- Modal Header -->
+        <h1 class="text-center text-xl font-semibold mb-5">Vehicle Details</h1>
 
-      <!-- Modal Body -->
-      <div class="overflow-y-auto h-[60vh] p-4">
-        <!-- Vehicle Category -->
-        <div class="mb-6">
-          <label
-            for="vehicle-category"
-            class="block text-sm font-medium text-gray-900"
-            >Vehicle Category</label
-          >
-          <input
-            type="text"
-            readonly
-            name="vehicle-category"
-            id="view-vehicle-category"
-            required
-            class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-          />
+        <!-- Modal Body -->
+        <div class="overflow-y-auto h-[60vh] p-4">
+          <!-- Vehicle Category -->
+          <div class="mb-6">
+            <label
+              for="vehicle-category"
+              class="block text-sm font-medium text-gray-900"
+              >Vehicle Category</label
+            >
+            <input
+              type="text"
+              readonly
+              name="vehicle-category"
+              id="view-vehicle-category"
+              required
+              class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+            />
+          </div>
+
+          <!-- License Plate Number -->
+          <div class="mb-6">
+            <label
+              for="license-plate-number"
+              class="block text-sm font-medium text-gray-900"
+              >License Plate Number</label
+            >
+            <input
+              type="text"
+              name="license-plate-number"
+              id="view-license-plate-number"
+              required
+              readonly
+              class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+            />
+          </div>
+
+          <!-- Fuel Type -->
+          <div class="mb-6">
+            <label
+              for="fuel-type"
+              class="block text-sm font-medium text-gray-900"
+              >Fuel Type</label
+            >
+            <select
+              name="fuel-type"
+              id="view-fuel-type"
+              required
+              disabled
+              class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+            >
+              <option value="" disabled selected>Select Fuel Type</option>
+              <option value="PETROL">PETROL</option>
+              <option value="DIESEL">DIESEL</option>
+              <option value="ELECTRIC">ELECTRIC</option>
+              <option value="HYBRID">HYBRID</option>
+            </select>
+          </div>
+
+          <!-- Status -->
+          <div class="mb-6">
+            <label for="status" class="block text-sm font-medium text-gray-900">
+              Status
+            </label>
+            <select
+              name="status"
+              id="view-status"
+              required
+              disabled
+              class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+            >
+              <option value="available">AVAILABLE</option>
+              <option value="out of service">OUT OF SERVICE</option>
+            </select>
+          </div>
+
+          <!-- Remarks -->
+          <div class="mb-6">
+            <label
+              for="remarks"
+              class="block text-sm font-medium text-gray-900"
+            >
+              Remarks
+            </label>
+            <textarea
+              name="remarks"
+              id="view-remarks"
+              readonly
+              rows="4"
+              class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+            ></textarea>
+          </div>
+
+          <!-- Allocated Staff -->
+          <div class="mb-6">
+            <label
+              for="allocated-staff"
+              class="block text-sm font-medium text-gray-900"
+              >Allocated Staff</label
+            >
+            <select
+              name="allocated-staff"
+              id="view-allocated-staff"
+              disabled
+              required
+              class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+            >
+              <option value="" disabled selected>Not Allocated</option>
+            </select>
+          </div>
         </div>
 
-        <!-- License Plate Number -->
-        <div class="mb-6">
-          <label
-            for="license-plate-number"
-            class="block text-sm font-medium text-gray-900"
-            >License Plate Number</label
-          >
-          <input
-            type="text"
-            name="license-plate-number"
-            id="view-license-plate-number"
-            required
-            readonly
-            class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-          />
-        </div>
-
-        <!-- Fuel Type -->
-        <div class="mb-6">
-          <label
-            for="fuel-type"
-            class="block text-sm font-medium text-gray-900"
-            >Fuel Type</label
-          >
-          <select
-            name="fuel-type"
-            id="view-fuel-type"
-            required
-            disabled
-            class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-          >
-            <option value="" disabled selected>Select Fuel Type</option>
-            <option value="PETROL">PETROL</option>
-            <option value="DIESEL">DIESEL</option>
-            <option value="ELECTRIC">ELECTRIC</option>
-            <option value="HYBRID">HYBRID</option>
-          </select>
-        </div>
-
-        <!-- Status -->
-        <div class="mb-6">
-          <label
-            for="status"
-            class="block text-sm font-medium text-gray-900"
-          >
-            Status
-          </label>
-          <select
-            name="status"
-            id="view-status"
-            required
-            disabled
-            class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-          >
-            <option value="available">AVAILABLE</option>
-            <option value="out of service">OUT OF SERVICE</option>
-          </select>
-        </div>
-
-        <!-- Remarks -->
-        <div class="mb-6">
-          <label
-            for="remarks"
-            class="block text-sm font-medium text-gray-900"
-          >
-            Remarks
-          </label>
-          <textarea
-            name="remarks"
-            id="view-remarks"
-            readonly
-            rows="4"
-            class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-          ></textarea>
-        </div>
-
-        <!-- Allocated Staff -->
-        <div class="mb-6">
-          <label
-            for="allocated-staff"
-            class="block text-sm font-medium text-gray-900"
-            >Allocated Staff</label
-          >
-          <select
-            name="allocated-staff"
-            id="view-allocated-staff"
-            disabled
-            required
-            class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-          >
-            <option value="" disabled selected>Not Allocated</option>
-          </select>
+        <!-- Modal Footer -->
+        <div class="mt-10 sm:grid-cols-6 poppins-semibold">
+          <div class="sm:col-span-3">
+            <div class="mt-2">
+              <button
+                id="close-view-modal"
+                class="bg-gray-300 w-full rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Modal Footer -->
-      <div class="mt-10 sm:grid-cols-6 poppins-semibold">
-        <div class="sm:col-span-3">
-          <div class="mt-2">
+    <!-- delete vehicle modal  -->
+    <div
+      id="delete-vehicle-modal"
+      class="fixed inset-0 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-300 ease-out"
+    >
+      <div
+        class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[30vw] mr-[18vw] mb-[15vh] transform scale-95 transition-transform duration-300 ease-out"
+      >
+        <!-- Modal Header -->
+        <h1 class="text-center text-xl font-bold mb-4 text-gray-800">
+          Are you sure?
+        </h1>
+
+        <!-- Modal Body -->
+        <div class="text-center p-4">
+          <svg
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            class="group-hover:animate-bounce w-16 h-16 flex items-center justify-center text-red-500 mx-auto mb-8"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+              fill-rule="evenodd"
+            ></path>
+          </svg>
+          <p class="font-medium text-sm text-gray-600 px-4">
+            Are you sure you want to delete <span id="delete-name"></span> ?
+            This action cannot be undone.
+          </p>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <!-- Delete Button -->
+          <div>
             <button
-              id="close-view-modal"
-              class="bg-gray-300 w-full rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none"
+              id="btn-delete"
+              class="w-full bg-red-600 rounded-lg py-2 px-4 text-white hover:bg-red-700 focus:outline-none transition duration-300"
+            >
+              Delete
+            </button>
+          </div>
+          <!-- Cancel Button -->
+          <div>
+            <button
+              id="close-delete-modal"
+              class="w-full bg-gray-300 rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none transition duration-300"
             >
               Cancel
             </button>
@@ -507,10 +560,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-
-
 
     <script
       type="module"

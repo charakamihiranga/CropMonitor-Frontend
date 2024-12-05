@@ -2,6 +2,7 @@ import {
   getAllVehicleData,
   addVehicle,
   updateVehicle,
+  deleteVehicleById
 } from "../model/VehicleModel.js";
 import { getStaff } from "../model/StaffModel.js";
 $(document).ready(() => {
@@ -26,6 +27,37 @@ $(document).ready(() => {
     "#view-icon",
     "#close-view-modal"
   );
+
+  const deleteVehicleModal = setupModal(
+    "#delete-vehicle-modal",
+    "#delete-icon",
+    "#close-delete-modal"
+  );
+
+  // handle delete vehicle
+
+  $(document).on("click", "#delete-icon", function (event) {
+    const rowIndex = $(this).closest(".table-row").data("index");
+    const vehicle = filteredVehicleData[rowIndex];
+    $("#delete-name").text(vehicle.licensePlateNumber);
+    deleteVehicleModal.open();
+    $("#btn-delete").on("click", async () => {
+      deleteVehicle(vehicle.vehicleCode);
+    });
+  });
+
+    async function deleteVehicle(vehicleCode) {
+    try {
+      let response = await deleteVehicleById(vehicleCode);
+      if (response.status === 204) {
+        getAllVehicles();
+        deleteVehicleModal.close();
+        alert(response.message);
+      }
+    } catch (error) {
+      alert("An unexpected error occurred. Please try again.");
+    }
+  }
 
   // view Vehicle Modal
 
