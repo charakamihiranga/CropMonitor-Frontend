@@ -41,6 +41,11 @@ $(document).ready(function() {
     $(".frame-container").attr("src", "view/pages/EquipmentManagementFrame.html");
     setActiveButton("equipment"); 
   });
+  $("#crop-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/CropManagementFrame.html");
+    setActiveButton("crop"); 
+  });
 
 
 
