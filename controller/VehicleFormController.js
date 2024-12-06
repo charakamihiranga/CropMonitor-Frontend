@@ -5,6 +5,7 @@ import {
   deleteVehicleById
 } from "../model/VehicleModel.js";
 import { getStaff } from "../model/StaffModel.js";
+import { formatName } from "../assets/js/util.js";
 $(document).ready(() => {
   let ascending = true;
   let vehicleData = [];
@@ -62,7 +63,6 @@ $(document).ready(() => {
   // view Vehicle Modal
 
   function setViewData(vehicle) {
-    console.log("vehicle: ", vehicle);
 
     $("#view-vehicle-category").val(vehicle.vehicleCategory || "N/A");
     $("#view-license-plate-number").val(vehicle.licensePlateNumber || "N/A");
@@ -96,7 +96,7 @@ $(document).ready(() => {
   // Add vehicle form submit event
   $("#btn-save").on("click", async () => {
     const vehicle = {
-      vehicleCategory: $("#vehicle-category").val(),
+      vehicleCategory: formatName($("#vehicle-category").val()),
       licensePlateNumber: $("#license-plate-number").val(),
       fuelType: $("#fuel-type").val(),
       status: $("#status").val().toLowerCase(),
@@ -172,7 +172,7 @@ $(document).ready(() => {
     // Update vehicle on save
     $("#btn-update").on("click", async () => {
       const updatedVehicle = {
-        vehicleCategory: $("#updated-vehicle-category").val(),
+        vehicleCategory: formatName($("#updated-vehicle-category").val()),
         licensePlateNumber: $("#updated-license-plate-number").val(),
         fuelType: $("#updated-fuel-type").val(),
         status: $("#updated-status").val().toLowerCase(),
@@ -348,4 +348,5 @@ $(document).ready(() => {
 
   // initial function call
   getAllVehicles();
+  
 });

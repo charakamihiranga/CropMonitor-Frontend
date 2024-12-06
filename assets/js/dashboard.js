@@ -20,7 +20,7 @@ function setActiveButton(buttonId) {
 
 
 $(document).ready(function() {
-  // Button click event for Staff Management
+
   $("#staff-btn").on("click", function(event) {
     event.preventDefault();
     $(".frame-container").attr("src", "view/pages/StaffManagementFrame.html");
@@ -30,6 +30,11 @@ $(document).ready(function() {
     event.preventDefault();
     $(".frame-container").attr("src", "view/pages/VehicleManagementFrame.html");
     setActiveButton("vehicle"); 
+  });
+  $("#field-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/FieldManagementFrame.html");
+    setActiveButton("field"); 
   });
 
 
