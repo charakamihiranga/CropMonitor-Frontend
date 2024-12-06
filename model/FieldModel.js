@@ -55,3 +55,35 @@ export function getAllFields(){
         },
     });
 }
+
+export function deleteFieldByCode(fieldCode){
+  const token = getJwtTokenFromCookies();
+  if (!token) {
+    console.error("JWT token not found in cookies.");
+    return;
+  }
+  return $.ajax({
+    url: `${API_URL}/field/${fieldCode}`,
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  .then((response, textStatus, jqXHR) => {
+    if (jqXHR.status === 204) {
+      return { status: 204, message: "Field deleted successfully." };
+    }
+  })
+  .catch((error) => {
+    let errorMessage =
+      "An error occurred while deleting Field. Please try again.";
+
+    if (error.status === 404) {
+      errorMessage = "Field not found.";
+    } else if (error.responseJSON && error.responseJSON.message) {
+      errorMessage = error.responseJSON.message;
+    }
+
+    return { status: error.status, message: errorMessage };
+  });
+}
