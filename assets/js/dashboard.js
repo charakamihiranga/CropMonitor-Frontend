@@ -36,6 +36,11 @@ $(document).ready(function() {
     $(".frame-container").attr("src", "view/pages/FieldManagementFrame.html");
     setActiveButton("field"); 
   });
+  $("#equipment-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/EquipmentManagementFrame.html");
+    setActiveButton("equipment"); 
+  });
 
 
 

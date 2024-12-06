@@ -147,9 +147,6 @@ $(document).ready(function () {
           <strong>${fieldName}</strong><br>
           <strong>Code:</strong> ${fieldCode}<br>
           <strong>Size:</strong> ${fieldSize} acres<br>
-          <strong>Equipments:</strong> ${
-            equipments.length ? equipments.join(", ") : "None"
-          }<br>
           <strong>Coordinates:</strong> ${latitude.toFixed(5)}, ${longitude.toFixed(5)}
         `);
   
