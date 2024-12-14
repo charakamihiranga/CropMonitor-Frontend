@@ -3,7 +3,10 @@ import {
   saveField,
   getAllFields,
   deleteFieldByCode,
+  getFieldByCode,
 } from "../model/FieldModel.js";
+
+import { getStaffById } from "../model/StaffModel.js";
 
 $(document).ready(function () {
   const addFieldModal = setupModal(
@@ -26,7 +29,7 @@ $(document).ready(function () {
   // Add Field Form Map
   let addFieldMap, addFieldMarker;
 
-  const markers = []; 
+  const markers = [];
 
   // Initialize Leaflet Map
   const map = L.map("field-map").setView([0, 0], 2); // Neutral starting point
@@ -36,20 +39,27 @@ $(document).ready(function () {
   }).addTo(map);
 
   // Handle view field
-  function handleViewField(fieldData) {
-    console.log(fieldData);
+  async function handleViewField(fieldCode) {
+    // Fetch field data by code and populate the modal
+    const fieldData = await getFieldByCode(fieldCode);
+    if (!fieldData) {
+      alert("Field data not found. Please try again.");
+      return;
+    }
 
     // Set modal content with field data using jQuery
     $("#view-field-name").val(fieldData.fieldName);
     $("#view-field-size").val(fieldData.fieldSize);
 
     const staffDropdown = $("#view-staff-dropdown");
-    fieldData.staff.forEach(function (staffMember) {
-      // Add the staff as a badge
-      addStaffBadgetoView(
-        staffMember.staffId,
-        `${staffMember.firstName} ${staffMember.lastName}`
-      );
+    fieldData.staffIds.forEach((staffId) => {
+      getStaffById(staffId).then((staffMember) => {
+        // Add the staff as a badge
+        addStaffBadgetoView(
+          staffMember.staffId,
+          `${staffMember.firstName} ${staffMember.lastName}`
+        );
+      });
     });
 
     viewFieldModel.open();
@@ -102,16 +112,16 @@ $(document).ready(function () {
       // Remove existing markers from the map
       markers.forEach((marker) => map.removeLayer(marker));
       markers.length = 0; // Clear the markers array
-  
+
       const fields = await getAllFields();
-  
+
       if (!fields || fields.length === 0) {
         console.warn("No fields available to display on the map.");
         return;
       }
-  
+
       const fieldLatLngs = []; // Array for map bounds adjustment
-  
+
       fields.forEach((field) => {
         const {
           fieldName,
@@ -120,51 +130,53 @@ $(document).ready(function () {
           fieldCode,
           equipments,
         } = field;
-  
+
         if (!latitude || !longitude) {
           console.warn(`Field "${fieldName}" has invalid coordinates.`);
           return; // Skip fields with missing coordinates
         }
-  
+
         // Add field coordinates to the LatLng array for bounds
         fieldLatLngs.push([latitude, longitude]);
-  
+
         // Create a marker at the field's location
         const marker = L.marker([latitude, longitude]).addTo(map);
-  
+
         // Store marker reference in the global array
         markers.push(marker);
-  
+
         // Always show field name as a permanent tooltip
         marker.bindTooltip(fieldName, {
           permanent: true,
           direction: "top",
           className: "field-tooltip", // Optional: Custom CSS for tooltips
         });
-  
+
         // Add a popup for detailed field information
         marker.bindPopup(`
           <strong>${fieldName}</strong><br>
           <strong>Code:</strong> ${fieldCode}<br>
           <strong>Size:</strong> ${fieldSize} acres<br>
-          <strong>Coordinates:</strong> ${latitude.toFixed(5)}, ${longitude.toFixed(5)}
+          <strong>Coordinates:</strong> ${latitude.toFixed(
+            5
+          )}, ${longitude.toFixed(5)}
         `);
-  
+
         // Open popup on hover and close it when mouse leaves
         marker.on("mouseover", function () {
           this.openPopup();
         });
-  
+
         marker.on("mouseout", function () {
           this.closePopup();
         });
-  
+
         // Optional: Handle marker click for additional actions
         marker.on("click", () => {
-          handleViewField(field); // Example: Show field details in a modal
+          handleViewField(field.fieldCode); // Example: Show field details in a modal
         });
       });
-  
+
       // Adjust map bounds to fit all fields
       if (fieldLatLngs.length > 0) {
         const bounds = L.latLngBounds(fieldLatLngs);
@@ -177,7 +189,7 @@ $(document).ready(function () {
       alert("Failed to load fields. Please try again.");
     }
   }
-  
+
   // Handle save field
   $("#btn-save").on("click", async function () {
     const fieldName = $("#field-name").val();
@@ -267,28 +279,30 @@ $(document).ready(function () {
   }
 
   // Load staff data into the dropdowns
-  async function loadStaffDataToDropdown(selectedStaffIds = []) { // Accept an array of selected IDs
+  async function loadStaffDataToDropdown(selectedStaffIds = []) {
+    // Accept an array of selected IDs
     try {
-        const staffData = await getStaff();
-        const dropDowns = ["#staff-dropdown", "#view-staff-dropdown"];
-        dropDowns.forEach((selector) => {
-            const dropDown = $(selector);
-            dropDown.empty();
-       
+      const staffData = await getStaff();
+      const dropDowns = ["#staff-dropdown", "#view-staff-dropdown"];
+      dropDowns.forEach((selector) => {
+        const dropDown = $(selector);
+        dropDown.empty();
 
-            staffData.forEach((staff) => {
-                const fullName = `${staff.firstName} ${staff.lastName}`.trim();
-                const selected = selectedStaffIds.includes(staff.staffId) ? "selected" : ""; // Check if ID is in the array
-                dropDown.append(
-                    `<option value="${staff.staffId}" ${selected} data-name="${fullName}">${fullName}</option>`
-                );
-            });
+        staffData.forEach((staff) => {
+          const fullName = `${staff.firstName} ${staff.lastName}`.trim();
+          const selected = selectedStaffIds.includes(staff.staffId)
+            ? "selected"
+            : ""; // Check if ID is in the array
+          dropDown.append(
+            `<option value="${staff.staffId}" ${selected} data-name="${fullName}">${fullName}</option>`
+          );
         });
+      });
     } catch (error) {
-        console.error("Error loading staff data:", error);
-        alert("Error loading staff data. Please try again.");
+      console.error("Error loading staff data:", error);
+      alert("Error loading staff data. Please try again.");
     }
-}
+  }
 
   // Setup modal functionality
   function setupModal(modalSelector, triggerSelector, closeSelector) {
@@ -330,72 +344,82 @@ $(document).ready(function () {
     }
   });
   // Staff badge management
-  $("#staff-dropdown").prop("multiple", true).on("change", function () { // Added multiple prop
-    for (const option of this.selectedOptions) {
+  $("#staff-dropdown")
+    .prop("multiple", true)
+    .on("change", function () {
+      // Added multiple prop
+      for (const option of this.selectedOptions) {
         const staffId = option.value;
         const staffName = option.text;
         addStaffBadge(staffId, staffName);
-    }
-    $(this).prop('selectedIndex', -1); // Clear selection after adding badges
-});
-    $("#view-staff-dropdown").prop("multiple", true).on("change", function () { // Added multiple prop
-    for (const option of this.selectedOptions) {
+      }
+      $(this).prop("selectedIndex", -1); // Clear selection after adding badges
+    });
+  $("#view-staff-dropdown")
+    .prop("multiple", true)
+    .on("change", function () {
+      // Added multiple prop
+      for (const option of this.selectedOptions) {
         const staffId = option.value;
         const staffName = option.text;
         addStaffBadgetoView(staffId, staffName);
-    }
-    $(this).prop('selectedIndex', -1); // Clear selection after adding badges
-});
+      }
+      $(this).prop("selectedIndex", -1); // Clear selection after adding badges
+    });
 
-// Function to add a staff badge (modified to prevent duplicates)
-function addStaffBadge(staffId, staffName) {
-    const existingBadge = $("#selected-staff span[data-staffId='" + staffId + "']");
+  // Function to add a staff badge (modified to prevent duplicates)
+  function addStaffBadge(staffId, staffName) {
+    const existingBadge = $(
+      "#selected-staff span[data-staffId='" + staffId + "']"
+    );
     if (!existingBadge.length) {
-        const badge = $("<span>")
-            .addClass(
-                "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
-            )
-            .attr("data-staffId", staffId)
-            .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`);
+      const badge = $("<span>")
+        .addClass(
+          "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
+        )
+        .attr("data-staffId", staffId)
+        .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`);
 
-        badge.appendTo("#selected-staff");
+      badge.appendTo("#selected-staff");
 
-        badge.find("i").on("click", function () {
-            removeStaffBadge(staffId, staffName, badge);
-        });
+      badge.find("i").on("click", function () {
+        removeStaffBadge(staffId, staffName, badge);
+      });
     }
-}
-function addStaffBadgetoView(staffId, staffName) {
-    const existingBadge = $("#view-selected-staff span[data-staffId='" + staffId + "']");
+  }
+  function addStaffBadgetoView(staffId, staffName) {
+    const existingBadge = $(
+      "#view-selected-staff span[data-staffId='" + staffId + "']"
+    );
     if (!existingBadge.length) {
-        const badge = $("<span>")
-            .addClass(
-                "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
-            )
-            .attr("data-staffId", staffId)
-            .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`);
+      const badge = $("<span>")
+        .addClass(
+          "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
+        )
+        .attr("data-staffId", staffId)
+        .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`);
 
-        badge.appendTo("#view-selected-staff");
+      badge.appendTo("#view-selected-staff");
 
-        badge.find("i").on("click", function () {
-            removeStaffBadgeFromView(staffId, staffName, badge);
-        });
+      badge.find("i").on("click", function () {
+        removeStaffBadgeFromView(staffId, staffName, badge);
+      });
     }
-}
+  }
 
-// Function to remove a staff badge (modified to add back to dropdown)
-function removeStaffBadge(staffId, staffName, badgeElement) {
+  // Function to remove a staff badge (modified to add back to dropdown)
+  function removeStaffBadge(staffId, staffName, badgeElement) {
     const option = $("<option>").val(staffId).text(staffName);
     $("#staff-dropdown").append(option);
     $("#staff-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
-}
-function removeStaffBadgeFromView(staffId, staffName, badgeElement) {
+  }
+  function removeStaffBadgeFromView(staffId, staffName, badgeElement) {
     const option = $("<option>").val(staffId).text(staffName);
     $("#view-staff-dropdown").append(option);
     $("#view-staff-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
-}
+  }
 
   // Initial setup
   loadStaffDataToDropdown();

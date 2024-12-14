@@ -27,6 +27,7 @@ export function getStaff() {
   });
 }
 
+
 export function addStaff(staffData) {
   const token = getJwtTokenFromCookies();
   if (!token) {
@@ -58,6 +59,28 @@ export function addStaff(staffData) {
       }
       return { status: error.status, message: errorMessage };
     });
+}
+
+export function getStaffById(staffId){
+  const token = getJwtTokenFromCookies();
+  if (!token) {
+    console.error("JWT token not found in cookies.");
+    return;
+  }
+  return $.ajax({
+    url: `${API_URL}/staff/${staffId}`,
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    success: function (response) {
+      return response;
+    },
+    error: function (error) {
+      console.error("Error fetching staff data:", error);
+      throw error;
+    },
+  });
 }
 
 export function updateStaffMember(staffId, updatedStaffObj) {

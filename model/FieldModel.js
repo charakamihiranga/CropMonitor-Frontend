@@ -56,6 +56,28 @@ export function getAllFields(){
     });
 }
 
+export function getFieldByCode(fieldCode){
+  const token = getJwtTokenFromCookies();
+  if (!token) {
+    console.error("JWT token not found in cookies.");
+    return;
+  }
+  return $.ajax({
+    url: `${API_URL}/field/${fieldCode}`,
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    success: function (response) {
+      return response;
+    },
+    error: function (error) {
+      console.error("Error fetching field data:", error);
+      throw error;
+    },
+  });
+}
+
 export function deleteFieldByCode(fieldCode){
   const token = getJwtTokenFromCookies();
   if (!token) {
