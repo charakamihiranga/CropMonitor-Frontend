@@ -267,29 +267,28 @@ $(document).ready(function () {
   }
 
   // Load staff data into the dropdowns
-  async function loadStaffDataToDropdown(selectedStaffId = null) {
+  async function loadStaffDataToDropdown(selectedStaffIds = []) { // Accept an array of selected IDs
     try {
-      const staffData = await getStaff();
-      const dropDowns = ["#staff-dropdown", "#view-staff-dropdown"];
-      dropDowns.forEach((selector) => {
-        const dropDown = $(selector);
-        dropDown.empty();
-        dropDown.append(
-          '<option value="" disabled selected>Select Staff</option>'
-        );
-        staffData.forEach((staff) => {
-          const fullName = `${staff.firstName} ${staff.lastName}`.trim();
-          const selected = staff.staffId === selectedStaffId ? "selected" : "";
-          dropDown.append(
-            `<option value="${staff.staffId}" ${selected} data-name="${fullName}">${fullName}</option>`
-          );
+        const staffData = await getStaff();
+        const dropDowns = ["#staff-dropdown", "#view-staff-dropdown"];
+        dropDowns.forEach((selector) => {
+            const dropDown = $(selector);
+            dropDown.empty();
+       
+
+            staffData.forEach((staff) => {
+                const fullName = `${staff.firstName} ${staff.lastName}`.trim();
+                const selected = selectedStaffIds.includes(staff.staffId) ? "selected" : ""; // Check if ID is in the array
+                dropDown.append(
+                    `<option value="${staff.staffId}" ${selected} data-name="${fullName}">${fullName}</option>`
+                );
+            });
         });
-      });
     } catch (error) {
-      console.error("Error loading staff data:", error);
-      alert("Error loading staff data. Please try again.");
+        console.error("Error loading staff data:", error);
+        alert("Error loading staff data. Please try again.");
     }
-  }
+}
 
   // Setup modal functionality
   function setupModal(modalSelector, triggerSelector, closeSelector) {
@@ -331,73 +330,72 @@ $(document).ready(function () {
     }
   });
   // Staff badge management
-  $("#view-staff-dropdown").on("change", function () {
-    const selectedOption = $(this).find(":selected");
-    if (selectedOption.val()) {
-      addStaffBadgetoView(selectedOption.val(), selectedOption.text());
-      selectedOption.remove(); // Remove selected staff from the dropdown
+  $("#staff-dropdown").prop("multiple", true).on("change", function () { // Added multiple prop
+    for (const option of this.selectedOptions) {
+        const staffId = option.value;
+        const staffName = option.text;
+        addStaffBadge(staffId, staffName);
     }
-  });
+    $(this).prop('selectedIndex', -1); // Clear selection after adding badges
+});
+    $("#view-staff-dropdown").prop("multiple", true).on("change", function () { // Added multiple prop
+    for (const option of this.selectedOptions) {
+        const staffId = option.value;
+        const staffName = option.text;
+        addStaffBadgetoView(staffId, staffName);
+    }
+    $(this).prop('selectedIndex', -1); // Clear selection after adding badges
+});
 
-  // Function to add a staff badge
-  function addStaffBadge(staffId, staffName) {
-    const badge = $("<span>")
-      .addClass(
-        "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
-      )
-      .attr("data-staffId", staffId) // Store staffId for identification
-      .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`) // Add close button for removal
-      .appendTo("#selected-staff"); // Add to the "selected staff" container
+// Function to add a staff badge (modified to prevent duplicates)
+function addStaffBadge(staffId, staffName) {
+    const existingBadge = $("#selected-staff span[data-staffId='" + staffId + "']");
+    if (!existingBadge.length) {
+        const badge = $("<span>")
+            .addClass(
+                "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
+            )
+            .attr("data-staffId", staffId)
+            .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`);
 
-    // Bind click event to remove the badge
-    badge.find("i").on("click", function () {
-      removeStaffBadge(staffId, staffName, badge); // Remove the badge when clicked
-    });
-  }
-  function addStaffBadgetoView(staffId, staffName) {
-    const badge = $("<span>")
-      .addClass(
-        "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
-      )
-      .attr("data-staffId", staffId) // Store staffId for identification
-      .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`) // Add close button for removal
-      .appendTo("#view-selected-staff"); // Add to the "selected staff" container
+        badge.appendTo("#selected-staff");
 
-    // Bind click event to remove the badge
-    badge.find("i").on("click", function () {
-      removeStaffBadgeFromView(staffId, staffName, badge); // Remove the badge when clicked
-    });
-  }
+        badge.find("i").on("click", function () {
+            removeStaffBadge(staffId, staffName, badge);
+        });
+    }
+}
+function addStaffBadgetoView(staffId, staffName) {
+    const existingBadge = $("#view-selected-staff span[data-staffId='" + staffId + "']");
+    if (!existingBadge.length) {
+        const badge = $("<span>")
+            .addClass(
+                "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
+            )
+            .attr("data-staffId", staffId)
+            .html(`${staffName} <i class="fas fa-times cursor-pointer"></i>`);
 
-  // Function to remove a staff badge
-  function removeStaffBadge(staffId, staffName, badgeElement) {
-    // Add the staff back to the dropdown
+        badge.appendTo("#view-selected-staff");
+
+        badge.find("i").on("click", function () {
+            removeStaffBadgeFromView(staffId, staffName, badge);
+        });
+    }
+}
+
+// Function to remove a staff badge (modified to add back to dropdown)
+function removeStaffBadge(staffId, staffName, badgeElement) {
     const option = $("<option>").val(staffId).text(staffName);
     $("#staff-dropdown").append(option);
-
-    // Remove the badge from the UI
+    $("#staff-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
-  }
-  // Function to remove a staff badge
-  function removeStaffBadgeFromView(staffId, staffName, badgeElement) {
-    // Add the staff back to the dropdown
+}
+function removeStaffBadgeFromView(staffId, staffName, badgeElement) {
     const option = $("<option>").val(staffId).text(staffName);
     $("#view-staff-dropdown").append(option);
-
-    // Remove the badge from the UI
+    $("#view-staff-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
-  }
-
-  // File preview functionality
-  $("#file, #file2").on("change", function () {
-    const file = this.files[0];
-    const previewId = this.id === "file" ? "#file-info1" : "#file-info2";
-    if (file?.type.startsWith("image/")) {
-      $(previewId).text(file.name).removeClass("hidden");
-    } else {
-      alert("Please select a valid image file.");
-    }
-  });
+}
 
   // Initial setup
   loadStaffDataToDropdown();
