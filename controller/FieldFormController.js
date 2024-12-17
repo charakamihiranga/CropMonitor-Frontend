@@ -47,6 +47,18 @@ $(document).ready(function () {
       return;
     }
 
+    // Set field images in the slider
+    const sliderImages = $("#slider-images");
+    sliderImages.empty(); 
+
+    if (fieldData.fieldImage1) {
+      sliderImages.append(`<img src="data:image/png;base64,${fieldData.fieldImage1}" alt="Field Image 1" class="w-full h-[40vh] object-cover" >`);
+    }
+
+    if (fieldData.fieldImage2) {
+      sliderImages.append(`<img src="data:image/png;base64,${fieldData.fieldImage2}" alt="Field Image 2" class="w-full h-[40vh] object-cover">`);
+    }
+    
     // clear existing badges
     removeAllBadges();
 
@@ -129,8 +141,7 @@ $(document).ready(function () {
           fieldName,
           fieldSize,
           fieldLocation: { x: longitude, y: latitude },
-          fieldCode,
-          equipments,
+          fieldCode
         } = field;
 
         if (!latitude || !longitude) {
@@ -203,7 +214,7 @@ $(document).ready(function () {
       staffIds.push($(this).data("staffid"));
     });
 
-    const file1 = $("#file")[0].files[0];
+    const file1 = $("#file1")[0].files[0];
     const file2 = $("#file2")[0].files[0];
     let field = new FormData();
     field.append("fieldName", fieldName);
@@ -228,14 +239,20 @@ $(document).ready(function () {
     }
   });
 
-  // Clear the field form
   function clearFields() {
-    $("#field-name, #field-size, #field-location, #latitude, #longitude").val(
-      ""
-    );
-    $("#staff-dropdown").prop("selectedIndex", 0);
-    $("#file, #file2").val("");
-    $("#file-info1, #file-info2").addClass("hidden").text("");
+    $("#field-name").val("");
+    $("#field-size").val("");
+    $("#latitude").val("");
+    $("#longitude").val("");
+    $("#field-location").val("");
+    $("#staff-dropdown").prop("selectedIndex", -1);
+    $("#selected-staff").empty();
+    $("#file1").val("");
+    $("#file2").val("");
+    $("#preview1").attr("src", "").addClass("hidden");
+    $("#preview2").attr("src", "").addClass("hidden");
+    $("#file-upload-container1").removeClass("hidden");
+    $("#file-upload-container2").removeClass("hidden");
   }
 
   //load map to add field form
@@ -323,6 +340,7 @@ $(document).ready(function () {
     });
 
     function closeModal() {
+      clearFields();
       $modal.addClass("opacity-0");
       $modalContent.addClass("scale-95");
       setTimeout(() => $modal.addClass("hidden"), 300);
@@ -442,6 +460,32 @@ $(document).ready(function () {
       }
     });
   }
+  $(document).ready(function () {
+    const $prevBtn = $('#prev');
+    const $nextBtn = $('#next');
+    const $sliderImages = $('#slider-images');
+    let currentIndex = 0;
+
+    const $images = $('#slider-images img');
+    const totalImages = $images.length;
+
+    // Set the container width dynamically based on the total number of images
+    $sliderImages.css('width', `${totalImages * 100}%`);
+
+    const updateSliderPosition = () => {
+      $sliderImages.css('transform', `translateX(-${(currentIndex * 100) / totalImages}%)`);
+    };
+
+    $nextBtn.on('click', () => {
+      currentIndex = (currentIndex + 1) % totalImages;
+      updateSliderPosition();
+    });
+
+    $prevBtn.on('click', () => {
+      currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+      updateSliderPosition();
+    });
+  });
 
   // Initialize the file upload handlers using jQuery
   handleFileUpload("file1", "preview1", "file-upload-container1");
