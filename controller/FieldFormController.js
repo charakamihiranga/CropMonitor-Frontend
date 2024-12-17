@@ -427,6 +427,27 @@ $(document).ready(function () {
     $("#view-selected-staff").empty();
   }
 
+
+  function handleFileUpload(inputId, previewId, containerId) {
+    $("#" + inputId).on("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          $("#" + previewId).attr("src", e.target.result); // Set the image preview
+          $("#" + previewId).removeClass("hidden");
+          $("#" + containerId).addClass("hidden"); // Hide the file upload div
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Initialize the file upload handlers using jQuery
+  handleFileUpload("file1", "preview1", "file-upload-container1");
+  handleFileUpload("file2", "preview2", "file-upload-container2");
+  
+
   // Initial setup
   loadStaffDataToDropdown();
   setAllFields();

@@ -117,9 +117,9 @@
             <!-- File Uploads in a single row -->
             <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <!-- File Upload Form 1 -->
-              <div>
+              <div id="file-upload-container1" class="relative">
                 <label
-                  for="file"
+                  for="file1"
                   class="flex flex-col items-center justify-center bg-gray-300 p-10 rounded-2xl border-2 border-dashed border-gray-500 shadow-xl cursor-pointer hover:bg-gray-200 transition-all"
                 >
                   <svg class="h-12 mb-4 fill-green-600" viewBox="0 0 640 512">
@@ -136,7 +136,7 @@
                     >Browse file</span
                   >
                   <input
-                    id="file"
+                    id="file1"
                     type="file"
                     accept="image/*"
                     class="hidden"
@@ -147,9 +147,15 @@
                   class="mt-4 text-gray-700 text-sm hidden"
                 ></p>
               </div>
+              <!-- Image Preview with fixed size and object-cover -->
+              <img
+                id="preview1"
+                alt="Preview 1"
+                class="hidden rounded-lg shadow-xl object-cover w-full h-60"
+              />
 
               <!-- File Upload Form 2 -->
-              <div>
+              <div id="file-upload-container2" class="relative">
                 <label
                   for="file2"
                   class="flex flex-col items-center justify-center bg-gray-300 p-10 rounded-2xl border-2 border-dashed border-gray-500 shadow-xl cursor-pointer hover:bg-gray-200 transition-all"
@@ -179,6 +185,12 @@
                   class="mt-4 text-gray-700 text-sm hidden"
                 ></p>
               </div>
+              <!-- Image Preview with fixed size and object-cover -->
+              <img
+                id="preview2"
+                alt="Preview 2"
+                class="hidden rounded-lg shadow-xl object-cover w-full h-60"
+              />
             </div>
 
             <!-- Map for Field Location -->
@@ -320,63 +332,62 @@
       </div>
     </div>
 
-     <!-- Delete Field Modal -->
+    <!-- Delete Field Modal -->
 
-     <div
-     id="delete-field-modal"
-     class="z-[10000] fixed inset-0 bg-opacity-50 flex justify-center  items-center hidden opacity-0 transition-opacity duration-300 ease-out"
-   >
-     <div
-       class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[30vw] mr-[18vw] mb-[15vh] transform scale-95 transition-transform duration-300 ease-out"
-     >
-       <!-- Modal Header -->
-       <h1 class="text-center text-xl font-bold mb-4 text-gray-800">
-         Are you sure?
-       </h1>
-   
-       <!-- Modal Body -->
-       <div class="text-center p-4">
-         <svg
-           fill="currentColor"
-           viewBox="0 0 20 20"
-           class="group-hover:animate-bounce w-16 h-16 flex items-center justify-center text-red-500 mx-auto mb-8"
-         >
-           <path
-             clip-rule="evenodd"
-             d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-             fill-rule="evenodd"
-           ></path>
-         </svg>
-         <p class="font-medium text-sm text-gray-600 px-4">
-             Are you sure you want to delete <span id="delete-field-name"></span> ? This action cannot be undone.
-         </p>
-       </div>
-   
-       <!-- Buttons Section -->
-       <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-         <!-- Delete Button -->
-         <div>
-           <button
-             id="btn-delete-field"
-             class="w-full bg-red-600 rounded-lg py-2 px-4 text-white hover:bg-red-700 focus:outline-none transition duration-300"
-           >
-             Delete
-           </button>
-         </div>
-         <!-- Cancel Button -->
-         <div>
-           <button
-             id="close-delete-modal"
-             class="w-full bg-gray-300 rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none transition duration-300"
-           >
-             Cancel
-           </button>
-         </div>
-       </div>
-     </div>
-   </div>
-   
+    <div
+      id="delete-field-modal"
+      class="z-[10000] fixed inset-0 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-300 ease-out"
+    >
+      <div
+        class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[30vw] mr-[18vw] mb-[15vh] transform scale-95 transition-transform duration-300 ease-out"
+      >
+        <!-- Modal Header -->
+        <h1 class="text-center text-xl font-bold mb-4 text-gray-800">
+          Are you sure?
+        </h1>
 
+        <!-- Modal Body -->
+        <div class="text-center p-4">
+          <svg
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            class="group-hover:animate-bounce w-16 h-16 flex items-center justify-center text-red-500 mx-auto mb-8"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+              fill-rule="evenodd"
+            ></path>
+          </svg>
+          <p class="font-medium text-sm text-gray-600 px-4">
+            Are you sure you want to delete
+            <span id="delete-field-name"></span> ? This action cannot be undone.
+          </p>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <!-- Delete Button -->
+          <div>
+            <button
+              id="btn-delete-field"
+              class="w-full bg-red-600 rounded-lg py-2 px-4 text-white hover:bg-red-700 focus:outline-none transition duration-300"
+            >
+              Delete
+            </button>
+          </div>
+          <!-- Cancel Button -->
+          <div>
+            <button
+              id="close-delete-modal"
+              class="w-full bg-gray-300 rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none transition duration-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script
       type="module"
