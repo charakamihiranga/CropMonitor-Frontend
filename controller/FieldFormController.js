@@ -47,11 +47,13 @@ $(document).ready(function () {
       return;
     }
 
+    // clear existing badges
+    removeAllBadges();
+
     // Set modal content with field data using jQuery
     $("#view-field-name").val(fieldData.fieldName);
     $("#view-field-size").val(fieldData.fieldSize);
 
-    const staffDropdown = $("#view-staff-dropdown");
     fieldData.staffIds.forEach((staffId) => {
       getStaffById(staffId).then((staffMember) => {
         // Add the staff as a badge
@@ -419,6 +421,10 @@ $(document).ready(function () {
     $("#view-staff-dropdown").append(option);
     $("#view-staff-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
+  }
+
+  function removeAllBadges() {
+    $("#view-selected-staff").empty();
   }
 
   // Initial setup
