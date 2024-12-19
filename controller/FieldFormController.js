@@ -490,6 +490,13 @@ $(document).ready(function () {
   // Initialize the file upload handlers using jQuery
   handleFileUpload("file1", "preview1", "file-upload-container1");
   handleFileUpload("file2", "preview2", "file-upload-container2");
+
+  // update image handlers
+
+  handleFileUpload("up-image-1", "up-preview-1", "update-image-upload-1");
+  handleFileUpload("up-image-2", "up-preview-2", "update-image-upload-2");
+
+  
   
 
   // Initial setup
