@@ -4,9 +4,11 @@ import {
   getAllFields,
   deleteFieldByCode,
   getFieldByCode,
+  updateFieldByCode
 } from "../model/FieldModel.js";
 
 import { getStaffById } from "../model/StaffModel.js";
+
 
 $(document).ready(function () {
   const addFieldModal = setupModal(
@@ -49,16 +51,20 @@ $(document).ready(function () {
 
     // Set field images in the slider
     const sliderImages = $("#slider-images");
-    sliderImages.empty(); 
+    sliderImages.empty();
 
     if (fieldData.fieldImage1) {
-      sliderImages.append(`<img src="data:image/png;base64,${fieldData.fieldImage1}" alt="Field Image 1" class="w-full h-[40vh] object-cover" >`);
+      sliderImages.append(
+        `<img id="f-image-1" src="data:image/png;base64,${fieldData.fieldImage1}" alt="Field Image 1" class="w-full h-[40vh] object-cover" >`
+      );
     }
 
     if (fieldData.fieldImage2) {
-      sliderImages.append(`<img src="data:image/png;base64,${fieldData.fieldImage2}" alt="Field Image 2" class="w-full h-[40vh] object-cover">`);
+      sliderImages.append(
+        `<img id="f-image-2" src="data:image/png;base64,${fieldData.fieldImage2}" alt="Field Image 2" class="w-full h-[40vh] object-cover">`
+      );
     }
-    
+
     // clear existing badges
     removeAllBadges();
 
@@ -85,7 +91,7 @@ $(document).ready(function () {
     $("#btn-update")
       .off("click")
       .on("click", function () {
-        updateField(fieldData.fieldCode);
+        updateField(fieldData);
       });
 
     $("#btn-delete")
@@ -95,9 +101,62 @@ $(document).ready(function () {
       });
   }
 
-  function updateField(fieldId) {
-    alert("Update field with ID: " + fieldId);
+  //function to update field
+  async function updateField(field) {
+    const updatedFieldName = $("#view-field-name").val();
+
+    const updatedFieldSize = parseFloat($("#view-field-size").val());
+
+    const updatedStaffIds = [];
+    $("#view-selected-staff span").each(function () {
+      updatedStaffIds.push($(this).data("staffid"));
+    });
+
+
+    let image1 = $("#up-image-1")[0].files[0];
+
+    let image2 = $("#up-image-2")[0].files[0];
+
+    if (!image1) {
+      console.error(
+        "Image 1 not updated. Using existing image for field:",
+      );
+      
+    }
+
+    if (!image2) {
+      console.error(
+        "Image 2 not updated. Using existing image for field:",
+      );
+      
+    }
+
+    let updatedField = new FormData();
+    updatedField.append("fieldName", updatedFieldName);
+    updatedField.append("fieldSize", updatedFieldSize);
+    updatedField.append("longitude", field.fieldLocation.x);
+    updatedField.append("latitude", field.fieldLocation.y);
+    updatedStaffIds.forEach((id) => updatedField.append("staffIds", id));
+    updatedField.append("fieldImage1", image1);
+    console.log("Image 1:", image1);
+    updatedField.append("fieldImage2", image2);
+    console.log("Image 2:", image2);
+    try {
+      let response = await updateFieldByCode(field.fieldCode, updatedField);
+      if (response.status === 204) {
+        alert(response.message);
+        viewFieldModel.close();
+        clearFields();
+        setAllFields();
+      } else {
+        alert(response.message);
+      }
+    } catch (error) {
+      alert("An unexpected error occurred. Please try again.");
+    }
   }
+
+
 
   async function deleteField(fieldCode, fieldName) {
     viewFieldModel.close();
@@ -141,7 +200,7 @@ $(document).ready(function () {
           fieldName,
           fieldSize,
           fieldLocation: { x: longitude, y: latitude },
-          fieldCode
+          fieldCode,
         } = field;
 
         if (!latitude || !longitude) {
@@ -253,6 +312,12 @@ $(document).ready(function () {
     $("#preview2").attr("src", "").addClass("hidden");
     $("#file-upload-container1").removeClass("hidden");
     $("#file-upload-container2").removeClass("hidden");
+    $("#up-image-1").val("");
+    $("#up-image-2").val("");
+    $("#up-preview-1").attr("src", "").addClass("hidden");
+    $("#up-preview-2").attr("src", "").addClass("hidden");
+    $("#update-image-upload-1").removeClass("hidden");
+    $("#update-image-upload-2").removeClass("hidden");
   }
 
   //load map to add field form
@@ -445,7 +510,6 @@ $(document).ready(function () {
     $("#view-selected-staff").empty();
   }
 
-
   function handleFileUpload(inputId, previewId, containerId) {
     $("#" + inputId).on("change", function () {
       const file = this.files[0];
@@ -461,27 +525,30 @@ $(document).ready(function () {
     });
   }
   $(document).ready(function () {
-    const $prevBtn = $('#prev');
-    const $nextBtn = $('#next');
-    const $sliderImages = $('#slider-images');
+    const $prevBtn = $("#prev");
+    const $nextBtn = $("#next");
+    const $sliderImages = $("#slider-images");
     let currentIndex = 0;
 
-    const $images = $('#slider-images img');
+    const $images = $("#slider-images img");
     const totalImages = $images.length;
 
     // Set the container width dynamically based on the total number of images
-    $sliderImages.css('width', `${totalImages * 100}%`);
+    $sliderImages.css("width", `${totalImages * 100}%`);
 
     const updateSliderPosition = () => {
-      $sliderImages.css('transform', `translateX(-${(currentIndex * 100) / totalImages}%)`);
+      $sliderImages.css(
+        "transform",
+        `translateX(-${(currentIndex * 100) / totalImages}%)`
+      );
     };
 
-    $nextBtn.on('click', () => {
+    $nextBtn.on("click", () => {
       currentIndex = (currentIndex + 1) % totalImages;
       updateSliderPosition();
     });
 
-    $prevBtn.on('click', () => {
+    $prevBtn.on("click", () => {
       currentIndex = (currentIndex - 1 + totalImages) % totalImages;
       updateSliderPosition();
     });
@@ -492,12 +559,8 @@ $(document).ready(function () {
   handleFileUpload("file2", "preview2", "file-upload-container2");
 
   // update image handlers
-
   handleFileUpload("up-image-1", "up-preview-1", "update-image-upload-1");
   handleFileUpload("up-image-2", "up-preview-2", "update-image-upload-2");
-
-  
-  
 
   // Initial setup
   loadStaffDataToDropdown();

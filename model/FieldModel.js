@@ -109,3 +109,38 @@ export function deleteFieldByCode(fieldCode){
     return { status: error.status, message: errorMessage };
   });
 }
+
+export function updateFieldByCode(fieldCode, fieldData){
+  const token = getJwtTokenFromCookies();
+  if (!token) {
+    console.error("JWT token not found in cookies.");
+    return;
+  }
+  return $.ajax({
+    url: `${API_URL}/field/${fieldCode}`,
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    data: fieldData,
+    processData: false, 
+    contentType: false,
+  })
+  .then((response, textStatus, jqXHR) => {
+    if (jqXHR.status === 204) {
+      return { status: 204, message: "Field updated successfully." };
+    }
+  })
+  .catch((error) => {
+    let errorMessage =
+      "An error occurred while updating Field. Please try again.";
+
+    if (error.status === 404) {
+      errorMessage = "Field not found for update.";
+    } else if (error.responseJSON && error.responseJSON.message) {
+      errorMessage = error.responseJSON.message;
+    }
+
+    return { status: error.status, message: errorMessage };
+  });
+}
