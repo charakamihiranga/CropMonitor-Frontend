@@ -55,6 +55,28 @@ export function getAllCrops(){
     });
 }
 
+export function getCropByCode(cropCode){
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return;
+    }
+    return $.ajax({
+        url: `${API_URL}/crop/${cropCode}`,
+        method: "GET",
+        headers: {
+        Authorization: `Bearer ${token}`,
+        },
+        success: function (response) {
+        return response;
+        },
+        error: function (error) {
+        console.error("Error fetching crop data:", error);
+        throw error;
+        },
+    });
+}
+
 export function deleteCropByCode(cropCode){
     const token = getJwtTokenFromCookies();
     if (!token) {
