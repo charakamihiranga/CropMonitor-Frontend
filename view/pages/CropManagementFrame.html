@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crop Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/css/general.css" />
+    <script src="../../assets/js/jquery-3.7.1.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body class="bg-gray-50 poppins-regular">
+    <div class="container mx-auto p-5">
+      <h1
+        class="text-xl sm:text-2xl font-semibold mb-8 text-center sm:text-left"
+      >
+        Crop Management
+      </h1>
+      <div
+        class="flex flex-wrap justify-end sm:justify-end space-x-0 sm:space-x-4 mb-5"
+      >
+        <button
+          id="add-crop-btn"
+          class="bg-green-600 text-white px-8 py-2 rounded-lg mb-4 font-semibold hover:bg-green-700 transition text-sm sm:text-base flex items-center space-x-2 group sm:w-auto"
+        >
+          <i
+            class="fa-solid fa-plus transition-transform transform group-hover:rotate-90"
+          ></i>
+          <span class="pl-2">Add</span>
+        </button>
+      </div>
+
+      <div id="crop-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+         <!-- Crop cards container  -->
+      </div>
+      
+      
+    
+
+      <!-- add crop modal  -->
+
+      <div
+        id="add-crop-modal"
+        class="z-[1000] fixed inset-0 hidden opacity-0 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ease-out"
+      >
+        <div
+          class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[50vw] mr-[20vw] mb-[10vh] transform scale-95 transition-transform duration-300 ease-out"
+        >
+          <!-- Modal Header -->
+          <h1 class="text-center text-xl font-semibold mb-5">Add Crop</h1>
+
+          <!-- Modal Body -->
+          <div class="overflow-y-auto h-[60vh] p-4">
+            
+            <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="sm:col-span-3">
+                  <label
+                    for="first-name"
+                    class="block text-sm font-medium text-gray-900"
+                    >Common Name</label
+                  >
+                  <div class="mt-2">
+                    <input
+                      type="text"
+                      name="first-name"
+                      id="common-name"
+                      required
+                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+                <div class="sm:col-span-3">
+                  <label
+                    for="last-name"
+                    class="block text-sm font-medium text-gray-900"
+                    >Scientific Name</label
+                  >
+                  <div class="mt-2">
+                    <input
+                      type="text"
+                      name="last-name"
+                      id="scientific-name"
+                      required
+                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mt-6">
+                <div class="sm:col-span-3">
+                  <label
+                    for="first-name"
+                    class="block text-sm font-medium text-gray-900"
+                    >Crop Category</label
+                  >
+                  <div class="mt-2">
+                    <input
+                      type="text"
+                      name="first-name"
+                      id="category"
+                      required
+                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+                <div class="sm:col-span-3">
+                  <label
+                    for="last-name"
+                    class="block text-sm font-medium text-gray-900"
+                    >Crop Season</label
+                  >
+                  <div class="mt-2">
+                    <input
+                      type="text"
+                      name="last-name"
+                      id="crop-season"
+                      required
+                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-6 mt-6">
+                <label
+                  for="staff-dropdown"
+                  class="block text-sm font-medium text-gray-900"
+                  >Allocated Fields</label
+                >
+                <select
+                  id="field-dropdown"
+                  class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-gray-900 outline outline-2 outline-gray-300 focus:outline-green-600"
+                >
+                  <option value="" disabled selected>Select Field</option>
+                  <option value="">Field 1</option>
+                  <option value="">Field 2</option>
+                  <option value="">Field 3</option>
+                </select>
+              </div>
+  
+
+            <!-- File Uploads in a single row -->
+            <div class="mt-10">
+              <div  id="file-upload">
+                <label
+                  for="crop-image"
+                  class="flex flex-col items-center justify-center bg-gray-300 p-10 rounded-2xl border-2 border-dashed border-gray-500 shadow-xl cursor-pointer hover:bg-gray-200 transition-all"
+                >
+                  <svg class="h-12 mb-4 fill-green-600" viewBox="0 0 640 512">
+                    <path
+                      d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                    ></path>
+                  </svg>
+                  <p class="text-gray-700 text-lg font-semibold">
+                    Drag and Drop
+                  </p>
+                  <p class="text-gray-600">or</p>
+                  <span
+                    class="bg-green-600 text-white px-5 py-2 rounded-lg mt-2 hover:bg-green-700 transition-all"
+                    >Browse Image</span
+                  >
+                  <input
+                    id="crop-image"
+                    type="file"
+                    accept="image/*"
+                    class="hidden"
+                  />
+                </label>  
+     
+              </div>
+            
+              <img
+              id="crop-preview"
+              alt="crop-preview"
+              class="hidden rounded-lg shadow-xl object-cover w-full h-[36vh]"
+            />
+
+            </div>
+
+            <!-- Modal Footer -->
+          </div>
+          <div
+            class="mt-8 grid grid-cols-1 sm:grid-cols-6 gap-4 poppins-semibold"
+          >
+            <div class="sm:col-span-3">
+              <button
+                id="btn-save"
+                class="bg-green-600 w-full rounded-lg py-2 text-white hover:bg-green-700 focus:outline-none"
+              >
+                Save
+              </button>
+            </div>
+            <div class="sm:col-span-3">
+              <button
+                id="close-add-crop-modal"
+                class="bg-gray-300 w-full rounded-lg py-2 text-black hover:bg-gray-400 focus:outline-none"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Crop Modal -->
+      <div
+        id="view-crop-modal"
+        class="z-[1000] fixed inset-0 hidden opacity-0 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ease-out"
+      >
+        <div
+          class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[50vw] mr-[18vw] mb-[5vh] transform scale-95 transition-transform duration-300 ease-out"
+        >
+          <h1 class="text-center text-xl font-semibold mb-5">
+            View Crop Details
+          </h1>
+
+          <div class="flex justify-center items-center mb-6">
+            <img
+                id="view-crop-image"
+              class="h-auto w-[100vw] object-cover md:h-[36vh]  rounded-lg"
+              src=""  
+              alt="Crop Image"
+            />
+          </div>
+          
+
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label
+                for="first-name"
+                class="block text-sm font-medium text-gray-900"
+                >Common Name</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="first-name"
+                  id="view-common-name"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label
+                for="last-name"
+                class="block text-sm font-medium text-gray-900"
+                >Scientific Name</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="last-name"
+                  id="view-scientific-name"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mt-5">
+            <div class="sm:col-span-3">
+              <label
+                for="first-name"
+                class="block text-sm font-medium text-gray-900"
+                >Crop Category</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="first-name"
+                  id="view-category"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label
+                for="last-name"
+                class="block text-sm font-medium text-gray-900"
+                >Crop Season</label
+              >
+              <div class="mt-2">
+                <input
+                  type="text"
+                  name="last-name"
+                  id="view-crop-season"
+                  required
+                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <label
+              for="staff-dropdown"
+              class="block text-sm font-medium text-gray-900"
+              >Allocated Fields</label
+            >
+            <select
+              id="view-field-dropdown"
+              class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-gray-900 outline outline-2 outline-gray-300 focus:outline-green-600"
+            >
+              <option value="" disabled selected>Select Field</option>
+              <option value="field1">Field 1</option>
+              <option value="field2">Field 2</option>
+              <option value="field3">Field 3</option>
+            </select>
+          
+          </div>
+
+          <!-- Buttons Section -->
+          <div
+            class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 poppins-semibold"
+          >
+            <button
+              id="btn-update"
+              class="bg-green-600 w-full rounded-lg py-2 text-white hover:bg-green-700 focus:outline-none"
+            >
+              Update
+            </button>
+            <button
+              id="btn-delete"
+              class="bg-red-600 w-full rounded-lg py-2 text-white hover:bg-red-700 focus:outline-none"
+            >
+              Delete
+            </button>
+            <button
+              id="view-crop-close"
+              class="bg-gray-300 w-full rounded-lg py-2 text-black hover:bg-gray-400 focus:outline-none"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- Delete Field Modal -->
+
+     <div
+     id="delete-crop-modal"
+     class="z-[10000] fixed inset-0 bg-opacity-50 flex justify-center  items-center hidden opacity-0 transition-opacity duration-300 ease-out"
+   >
+     <div
+       class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[30vw] mr-[18vw] mb-[15vh] transform scale-95 transition-transform duration-300 ease-out"
+     >
+       <!-- Modal Header -->
+       <h1 class="text-center text-xl font-bold mb-4 text-gray-800">
+         Are you sure?
+       </h1>
+   
+       <!-- Modal Body -->
+       <div class="text-center p-4">
+         <svg
+           fill="currentColor"
+           viewBox="0 0 20 20"
+           class="group-hover:animate-bounce w-16 h-16 flex items-center justify-center text-red-500 mx-auto mb-8"
+         >
+           <path
+             clip-rule="evenodd"
+             d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+             fill-rule="evenodd"
+           ></path>
+         </svg>
+         <p class="font-medium text-sm text-gray-600 px-4">
+             Are you sure you want to delete <span id="delete-crop-name"></span> ? This action cannot be undone.
+         </p>
+       </div>
+   
+       <!-- Buttons Section -->
+       <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+         <!-- Delete Button -->
+         <div>
+           <button
+             id="btn-delete-crop"
+             class="w-full bg-red-600 rounded-lg py-2 px-4 text-white hover:bg-red-700 focus:outline-none transition duration-300"
+           >
+             Delete
+           </button>
+         </div>
+         <!-- Cancel Button -->
+         <div>
+           <button
+             id="close-delete-modal"
+             class="w-full bg-gray-300 rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none transition duration-300"
+           >
+             Cancel
+           </button>
+         </div>
+       </div>
+     </div>
+   </div>
+   
+
+
+    <script
+      type="module"
+      src="../../controller/CropManagementController.js"
+    ></script>
+  </body>
+</html>

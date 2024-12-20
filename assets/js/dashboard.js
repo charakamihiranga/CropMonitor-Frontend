@@ -1,3 +1,4 @@
+
 // Function to handle active button state
 function setActiveButton(buttonId) {
   // Reset all buttons to inactive state
@@ -16,12 +17,36 @@ function setActiveButton(buttonId) {
   }
 }
 
+
+
 $(document).ready(function() {
-  // Button click event for Staff Management
-  $("#staff-btn").on("click", function() {
+
+  $("#staff-btn").on("click", function(event) {
+    event.preventDefault();
     $(".frame-container").attr("src", "view/pages/StaffManagementFrame.html");
     setActiveButton("staff"); // Set staff button as active
   });
+  $("#vehicle-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/VehicleManagementFrame.html");
+    setActiveButton("vehicle"); 
+  });
+  $("#field-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/FieldManagementFrame.html");
+    setActiveButton("field"); 
+  });
+  $("#equipment-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/EquipmentManagementFrame.html");
+    setActiveButton("equipment"); 
+  });
+  $("#crop-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/CropManagementFrame.html");
+    setActiveButton("crop"); 
+  });
+
 
 
   // Add more buttons if needed
@@ -51,3 +76,5 @@ $(document).ready(function() {
   });
 
 });
+
+

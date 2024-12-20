@@ -22,7 +22,7 @@
     <script src="assets/js/jquery-3.7.1.min.js"></script>
   </head>
 
-  <body class=" h-screen flex flex-col poppins-regular">
+  <body class="h-screen flex flex-col poppins-regular">
     <!-- Sidebar -->
     <div class="flex h-full">
       <aside
@@ -39,7 +39,7 @@
           <button
             id="close-sidebar"
             class="md:hidden text-gray-500 hover:text-green-700 transform transition-transform duration-300 hover:scale-125"
-            onclick="toggleMenu()"
+            
           >
             <i class="fas fa-times text-2xl"></i>
           </button>
@@ -66,8 +66,8 @@
               <button
                 id="staff-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
-                onclick="setActiveButton('staff-btn')"
-                >
+                
+              >
                 <img
                   id="staff-icon"
                   src="https://via.placeholder.com/20?text=P"
@@ -84,8 +84,8 @@
               <button
                 id="field-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
-                onclick = "setActiveButton('field-btn')"
-                >
+                onclick="setActiveButton('field-btn')"
+              >
                 <img
                   id="field-icon"
                   src="https://via.placeholder.com/20?text=S"
@@ -100,6 +100,7 @@
             <!-- Crop Management Button -->
             <li>
               <button
+              id="crop-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
               >
                 <img
@@ -132,6 +133,7 @@
             <!-- Equipment Button -->
             <li>
               <button
+              id="equipment-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
               >
                 <img
@@ -146,6 +148,7 @@
             <!-- Vehicle Button -->
             <li>
               <button
+                id="vehicle-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
               >
                 <img
@@ -182,7 +185,9 @@
               alt="Logout Icon"
               class="mr-3 w-6 md:w-7 lg:w-8"
             />
-            <span class="text-xs md:text-sm lg:text-base poppins-medium">Logout</span>
+            <span class="text-xs md:text-sm lg:text-base poppins-medium"
+              >Logout</span
+            >
           </button>
         </nav>
       </aside>
@@ -192,29 +197,27 @@
         <header
           class="bg-white shadow-md p-4 flex justify-between items-center"
         >
-       
-        <div class="flex space-x-4">
-          <button
-            id="menu-toggle"
-            class="md:hidden text-gray-500 hover:text-green-700 transform transition-transform duration-300 hover:scale-125"
-          >
-            <i class="fa-solid fa-bars-staggered text-2xl "></i>
-          </button>
-          <div class="relative hidden md:block group">
-            <input
-            id="search-bar"
-              type="text"
-              placeholder="Search here..."
-              name="text"
-              class="w-[20vw] pl-10 pr-4 py-2 rounded-xl border border-2 border-gray-300 opacity-80 focus:opacity-100 focus:w-[24vw] transition-all duration-200 ease-in-out outline-none hover:border-green-500 focus:border-green-500 group-hover:border-green-500"
-            />
-            <i
-              class="fa fa-search absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600 focus:text-green-500 group-hover:text-green-500"
-            ></i>
+          <div class="flex space-x-4">
+            <button
+              id="menu-toggle"
+              class="md:hidden text-gray-500 hover:text-green-700 transform transition-transform duration-300 hover:scale-125"
+            >
+              <i class="fa-solid fa-bars-staggered text-2xl"></i>
+            </button>
+            <div class="relative hidden md:block group">
+              <input
+                id="search-bar"
+                type="text"
+                placeholder="Search here..."
+                name="text"
+                class="w-[20vw] pl-10 pr-4 py-2 rounded-xl border border-2 border-gray-300 opacity-80 focus:opacity-100 focus:w-[24vw] transition-all duration-200 ease-in-out outline-none hover:border-green-500 focus:border-green-500 group-hover:border-green-500"
+              />
+              <i
+                class="fa fa-search absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600 focus:text-green-500 group-hover:text-green-500"
+              ></i>
+            </div>
           </div>
-        </div>
-        
-        
+
           <div class="flex items-center space-x-4 pr-4 group cursor-pointer">
             <img
               src="assets/img/default-profile.png"
@@ -239,12 +242,12 @@
         <!-- Main Content -->
         <main class="flex-1">
           <div class="bg-white h-full">
-            <iframe class="frame-container w-full h-full"></iframe>
+            <iframe class="frame-container w-full h-full" title=""></iframe>
           </div>
         </main>
       </div>
     </div>
 
-    <script src="./assets/js/dashboard.js"></script>
+    <script type="module" src="./assets/js/dashboard.js"></script>
   </body>
 </html>
