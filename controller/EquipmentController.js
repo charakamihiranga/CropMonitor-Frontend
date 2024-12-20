@@ -3,9 +3,10 @@ import {
   addEquipment,
   updateEquipment,
   deleteEquipmentById,
-} from "../model/EquipmentModel.js"; // Updated import to equipment model
-import { getStaff } from "../model/StaffModel.js";
-import { getAllFields } from "../model/FieldModel.js";
+  getEquipmentById,
+} from "../model/EquipmentModel.js";
+import { getStaff, getStaffById } from "../model/StaffModel.js";
+import { getAllFields, getFieldByCode } from "../model/FieldModel.js";
 import { formatName } from "../assets/js/util.js";
 $(document).ready(() => {
   let ascending = true;
@@ -36,13 +37,6 @@ $(document).ready(() => {
     "#close-delete-modal"
   );
 
-  function setFields() {
-    try {
-    } catch (error) {}
-  }
-
-  function setStaff() {}
-
   // handle delete equipment
   $(document).on("click", "#delete-icon", function (event) {
     const rowIndex = $(this).closest(".table-row").data("index");
@@ -68,7 +62,9 @@ $(document).ready(() => {
   }
 
   // view Equipment Modal
-  function setViewData(equipment) {
+  async function setViewData(equipmentId) {
+    const equipment = await getEquipmentById(equipmentId);
+
     $("#view-eq-name").val(equipment.name || "N/A");
     $("#view-eq-id").val(equipment.equipmentId || "N/A");
     $("#view-status").html(
@@ -83,14 +79,17 @@ $(document).ready(() => {
     );
 
     // Handling allocated staff display
-    const staffName = equipment.staff
-      ? `${equipment.staff.firstName || ""} ${
-          equipment.staff.lastName || ""
-        }`.trim()
+
+    const staffById = await getStaffById(equipment.staffId);
+
+    const staffName = staffById
+      ? `${staffById.firstName || ""} ${staffById.lastName || ""}`.trim()
       : "Not Allocated";
 
-    const fieldName = equipment.field
-      ? `${equipment.field.fieldName}`.trim()
+    const fieldByCode = await getFieldByCode(equipment.fieldCode);
+
+    const fieldName = fieldByCode
+      ? `${fieldByCode.fieldName}`.trim()
       : "Not Allocated";
 
     $("#view-allocated-staff").html(
@@ -106,7 +105,7 @@ $(document).ready(() => {
     const rowIndex = $(this).closest(".table-row").data("index");
     const equipment = filteredEquipmentData[rowIndex];
 
-    setViewData(equipment); // Set data in the view modal
+    setViewData(equipment.equipmentId); // Set data in the view modal
     viewEquipmentModal.open();
   });
 
@@ -204,14 +203,22 @@ $(document).ready(() => {
     $("#updated-eq-name").val(equipment.name);
     $("#updated-eq-type").val(equipment.type);
     $("#updated-eq-status").val(equipment.status);
-    $("#updated-allocated-staff").val(equipment.staff ? `${equipment.staff.firstName} ${equipment.staff.lastName}` : "N/A");
-    $("#updated-allocated-field").val(equipment.field ? equipment.field.fieldName : "N/A");
+    $("#updated-allocated-staff").val(
+      equipment.staff
+        ? `${equipment.staff.firstName} ${equipment.staff.lastName}`
+        : "N/A"
+    );
+    $("#updated-allocated-field").val(
+      equipment.field ? equipment.field.fieldName : "N/A"
+    );
 
     // Populate staff dropdown
     const selectedStaffId = equipment.staff ? equipment.staff.staffId : null;
-    const selectedFieldCode = equipment.field ? equipment.field.fieldCode : null;
+    const selectedFieldCode = equipment.field
+      ? equipment.field.fieldCode
+      : null;
     loadStaffDataToDropdown(selectedStaffId);
-    loadFieldDataToDropdown(selectedFieldCode)
+    loadFieldDataToDropdown(selectedFieldCode);
 
     // Open update modal
     updateEquipmentModal.open();
@@ -225,9 +232,6 @@ $(document).ready(() => {
         staffId: $("#updated-allocated-staff").val() || null,
         fieldCode: $("#updated-allocated-field").val(),
       };
-
-      console.log(updatedEquipment);
-      
 
       try {
         const response = await updateEquipment(
@@ -403,6 +407,4 @@ $(document).ready(() => {
 
   // initial function call
   getAllEquipment();
-  setFields();
-  setStaff();
 });

@@ -89,9 +89,29 @@ export function updateEquipment(equipmentId, equipmentObj) {
     });
 }
 
-export function deleteEquipmentById(equipmentId) {
-  console.log("deleteEquipmentById called:" + equipmentId);
+export function getEquipmentById(equipmentId) {
+  const token = getJwtTokenFromCookies();
+  if (!token) {
+    console.error("JWT token not found in cookies.");
+    return;
+  }
+  return $.ajax({
+    url: `${API_URL}/${equipmentId}`,
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    success: function (response) {
+      return response;
+    },
+    error: function (error) {
+      console.error("Error fetching equipment data:", error);
+      throw error;
+    },
+  });
+}
 
+export function deleteEquipmentById(equipmentId) {
   const token = getJwtTokenFromCookies();
   if (!token) {
     console.error("JWT token not found in cookies.");
