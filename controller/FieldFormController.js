@@ -1,4 +1,4 @@
-import { getStaff } from "../model/StaffModel.js";
+import { getStaff, getStaffById } from "../model/StaffModel.js";
 import {
   saveField,
   getAllFields,
@@ -6,8 +6,6 @@ import {
   getFieldByCode,
   updateFieldByCode
 } from "../model/FieldModel.js";
-
-import { getStaffById } from "../model/StaffModel.js";
 
 
 $(document).ready(function () {

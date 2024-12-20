@@ -89,6 +89,34 @@ export function updateVehicle(vehicleId, vehicleObj) {
     });
 }
 
+export function getVehicleById(vehicleCode){
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return;
+    }
+    return $.ajax({
+        url: `${API_URL}/${vehicleCode}`,
+        method: "GET",
+        headers: {
+        Authorization: `Bearer ${token}`,
+        },
+    })
+        .then((response) => {
+        return response;
+        })
+        .catch((error) => {
+        let errorMessage =
+            "An error occurred while fetching vehicle. Please try again.";
+        if (error.status === 404) {
+            errorMessage = "Vehicle not found.";
+        } else if (error.responseJSON && error.responseJSON.message) {
+            errorMessage = error.responseJSON.message;
+        }
+        return { status: error.status, message: errorMessage };
+        });
+}
+
 export function deleteVehicleById(vehicleCode){
     console.log("deleteVehicleById called:"+vehicleCode);
     

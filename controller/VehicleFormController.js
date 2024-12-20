@@ -2,9 +2,10 @@ import {
   getAllVehicleData,
   addVehicle,
   updateVehicle,
-  deleteVehicleById
+  deleteVehicleById,
+  getVehicleById
 } from "../model/VehicleModel.js";
-import { getStaff } from "../model/StaffModel.js";
+import { getStaff, getStaffById } from "../model/StaffModel.js";
 import { formatName } from "../assets/js/util.js";
 $(document).ready(() => {
   let ascending = true;
@@ -62,7 +63,8 @@ $(document).ready(() => {
 
   // view Vehicle Modal
 
-  function setViewData(vehicle) {
+  async function setViewData(vehicle) {
+    
 
     $("#view-vehicle-category").val(vehicle.vehicleCategory || "N/A");
     $("#view-license-plate-number").val(vehicle.licensePlateNumber || "N/A");
@@ -75,9 +77,13 @@ $(document).ready(() => {
     $("#view-remarks").val(vehicle.remarks || "N/A");
 
     // Handling allocated staff display
-    const staffName = vehicle.staff
-      ? `${vehicle.staff.firstName || ""} ${
-          vehicle.staff.lastName || ""
+
+    const staffById = await getStaffById(vehicle.staffId);
+    
+
+    const staffName = staffById
+      ? `${staffById.firstName || ""} ${
+          staffById.lastName || ""
         }`.trim()
       : "Not Allocated";
     $("#view-allocated-staff").html(
@@ -85,11 +91,13 @@ $(document).ready(() => {
     );
   }
 
-  $(document).on("click", "#view-icon", function () {
+  $(document).on("click", "#view-icon", async function () {
     const rowIndex = $(this).closest(".table-row").data("index");
     const vehicle = filteredVehicleData[rowIndex];
 
-    setViewData(vehicle); // Set data in the view modal
+    const vehicleByCode = await getVehicleById(vehicle.vehicleCode);
+    setViewData(vehicleByCode);
+
     viewVehicleModal.open();
   });
 
@@ -214,6 +222,7 @@ $(document).ready(() => {
         const status = vehicle.status?.toLowerCase() || "";
 
         // Handle staff name more safely, ensure "N/A" is lowercased only once
+        
         const staffName = vehicle.staff
           ? `${vehicle.staff.firstName || ""} ${
               vehicle.staff.lastName || ""
