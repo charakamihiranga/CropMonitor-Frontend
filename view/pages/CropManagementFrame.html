@@ -39,8 +39,35 @@
         </button>
       </div>
 
-      <div id="crop-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-         <!-- Crop cards container  -->
+         <div class="overflow-x-auto">
+        <!-- Table Header -->
+        <div
+          class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-green-600 text-center font-semibold text-xs sm:text-sm text-white p-2 rounded-t-xl"
+        >
+          <div
+            class="p-2 truncate flex items-center justify-center group cursor-pointer"
+          >
+            <span>Common Name</span>
+            <i
+              id="sort-category"
+              class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"
+            ></i>
+          </div>
+
+          <div class="p-2 sm:block">Scientific Name</div>
+
+          <div class="p-2 hidden sm:block truncate">Category</div>
+          <div class="p-2 hidden sm:block truncate">Crop Season</div>
+        </div>
+
+        <!-- Table Body -->
+        <div class="h-[72vh] overflow-y-auto vehicle-table-body">
+          <div id="loader" class="flex items-center justify-center h-full">
+            <div
+              class="w-10 h-10 border-4 border-t-4 border-green-500 border-t-transparent rounded-full animate-spin"
+            ></div>
+          </div>
+        </div>
       </div>
       
       
