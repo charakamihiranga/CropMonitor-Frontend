@@ -46,7 +46,11 @@ $(document).ready(function() {
     $(".frame-container").attr("src", "view/pages/CropManagementFrame.html");
     setActiveButton("crop"); 
   });
-
+  $("#mlog-btn").on("click", function(event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/LogManagementFrame.html");
+    setActiveButton("mlog"); 
+  });
 
 
   // Add more buttons if needed
