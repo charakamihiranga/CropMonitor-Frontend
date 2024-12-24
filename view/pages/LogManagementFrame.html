@@ -23,13 +23,13 @@
       <h1
         class="text-xl sm:text-2xl font-semibold mb-8 text-center sm:text-left"
       >
-        Crop Management
+        Log Management
       </h1>
       <div
         class="flex flex-wrap justify-end sm:justify-end space-x-0 sm:space-x-4 mb-5"
       >
         <button
-          id="add-crop-btn"
+          id="add-log-btn"
           class="bg-green-600 text-white px-8 py-2 rounded-lg mb-4 font-semibold hover:bg-green-700 transition text-sm sm:text-base flex items-center space-x-2 group sm:w-auto"
         >
           <i
@@ -39,147 +39,25 @@
         </button>
       </div>
 
-         <div class="overflow-x-auto">
-        <!-- Table Header -->
-        <div
-          class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-green-600 text-center font-semibold text-xs sm:text-sm text-white p-2 rounded-t-xl"
-        >
-          <div
-            class="p-2 truncate flex items-center justify-center group cursor-pointer"
-          >
-            <span>Common Name</span>
-            <i
-              id="sort-category"
-              class="fa fa-sort-down text-gray-300 ml-2 group-hover:text-white transition-colors text-base sm:text-sm"
-            ></i>
-          </div>
-
-          <div class="p-2 sm:block">Scientific Name</div>
-
-          <div class="p-2 hidden sm:block truncate">Category</div>
-          <div class="p-2 hidden sm:block truncate">Crop Season</div>
-        </div>
-
-        <!-- Table Body -->
-        <div class="h-[72vh] overflow-y-auto vehicle-table-body">
-          <div id="loader" class="flex items-center justify-center h-full">
-            <div
-              class="w-10 h-10 border-4 border-t-4 border-green-500 border-t-transparent rounded-full animate-spin"
-            ></div>
-          </div>
-        </div>
-      </div>
-      
-      
-    
-
-      <!-- add crop modal  -->
+      <!-- Add log modal -->
 
       <div
-        id="add-crop-modal"
-        class="z-[1000] fixed inset-0 hidden opacity-0 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ease-out"
+        id="add-log-modal"
+        class="fixed inset-0 bg-opacity-50 flex justify-center hidden opacity-0 items-center transition-opacity duration-300 ease-out"
       >
         <div
-          class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[50vw] mr-[20vw] mb-[10vh] transform scale-95 transition-transform duration-300 ease-out"
+          class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[50vw] mr-[18vw] mb-[10vh] transform scale-95 transition-transform duration-300 ease-out"
         >
           <!-- Modal Header -->
-          <h1 class="text-center text-xl font-semibold mb-5">Add Crop</h1>
+          <h1 class="text-center text-xl font-semibold mb-5">Add Log</h1>
 
           <!-- Modal Body -->
           <div class="overflow-y-auto h-[60vh] p-4">
-            
-            <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div class="sm:col-span-3">
-                  <label
-                    for="first-name"
-                    class="block text-sm font-medium text-gray-900"
-                    >Common Name</label
-                  >
-                  <div class="mt-2">
-                    <input
-                      type="text"
-                      name="first-name"
-                      id="common-name"
-                      required
-                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-                <div class="sm:col-span-3">
-                  <label
-                    for="last-name"
-                    class="block text-sm font-medium text-gray-900"
-                    >Scientific Name</label
-                  >
-                  <div class="mt-2">
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="scientific-name"
-                      required
-                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-            <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mt-6">
-                <div class="sm:col-span-3">
-                  <label
-                    for="first-name"
-                    class="block text-sm font-medium text-gray-900"
-                    >Crop Category</label
-                  >
-                  <div class="mt-2">
-                    <input
-                      type="text"
-                      name="first-name"
-                      id="category"
-                      required
-                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-                <div class="sm:col-span-3">
-                  <label
-                    for="last-name"
-                    class="block text-sm font-medium text-gray-900"
-                    >Crop Season</label
-                  >
-                  <div class="mt-2">
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="crop-season"
-                      required
-                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-6 mt-6">
+            <!-- Image upload section -->
+            <div class="mb-12">
+              <div id="file-upload">
                 <label
-                  for="staff-dropdown"
-                  class="block text-sm font-medium text-gray-900"
-                  >Allocated Fields</label
-                >
-                <select
-                  id="field-dropdown"
-                  class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-gray-900 outline outline-2 outline-gray-300 focus:outline-green-600"
-                >
-                  <option value="" disabled selected>Select Field</option>
-                  <option value="">Field 1</option>
-                  <option value="">Field 2</option>
-                  <option value="">Field 3</option>
-                </select>
-              </div>
-  
-
-            <!-- File Uploads in a single row -->
-            <div class="mt-10">
-              <div  id="file-upload">
-                <label
-                  for="crop-image"
+                  for="log-image"
                   class="flex flex-col items-center justify-center bg-gray-300 p-10 rounded-2xl border-2 border-dashed border-gray-500 shadow-xl cursor-pointer hover:bg-gray-200 transition-all"
                 >
                   <svg class="h-12 mb-4 fill-green-600" viewBox="0 0 640 512">
@@ -196,27 +74,97 @@
                     >Browse Image</span
                   >
                   <input
-                    id="crop-image"
+                    id="log-image"
                     type="file"
                     accept="image/*"
                     class="hidden"
                   />
-                </label>  
-     
+                </label>
               </div>
-            
-              <img
-              id="crop-preview"
-              alt="crop-preview"
-              class="hidden rounded-lg shadow-xl object-cover w-full h-[36vh]"
-            />
 
+              <img
+                id="log-preview"
+                alt="log-preview"
+                class="hidden rounded-lg shadow-xl object-cover w-full h-[36vh]"
+              />
             </div>
 
-            <!-- Modal Footer -->
+            <!-- Allocated Fields -->
+            <div class="mb-6">
+              <label
+                for="staff-dropdown"
+                class="block text-sm font-medium text-gray-900"
+                >Allocated Field</label
+              >
+              <select
+                id="field-dropdown"
+                class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-gray-900 outline outline-2 outline-gray-300 focus:outline-green-600"
+              >
+                <option value="field1">Field 1</option>
+                <option value="field2">Field 2</option>
+                <option value="field3">Field 3</option>
+              </select>
+              <div id="selected-field" class="flex flex-wrap gap-2 mt-4"></div>
+            </div>
+
+            <!-- Allocated Crops -->
+
+            <div class="mb-6">
+              <label
+                for="crop-dropdown"
+                class="block text-sm font-medium text-gray-900"
+                >Allocated Crops</label
+              >
+              <select
+                id="crop-dropdown"
+                class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-gray-900 outline outline-2 outline-gray-300 focus:outline-green-600"
+              >
+                <option value="crop1">Crop 1</option>
+                <option value="crop2">Crop 2</option>
+                <option value="crop3">Crop 3</option>
+              </select>
+              <div id="selected-crop" class="flex flex-wrap gap-2 mt-4"></div>
+            </div>
+
+            <!-- Allocated Staff -->
+
+            <div class="mb-6">
+              <label
+                for="staff-dropdown"
+                class="block text-sm font-medium text-gray-900"
+                >Allocated Staff</label
+              >
+              <select
+                id="staff-dropdown"
+                class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-gray-900 outline outline-2 outline-gray-300 focus:outline-green-600"
+              >
+                <option value="staff1">Staff 1</option>
+                <option value="staff2">Staff 2</option>
+                <option value="staff3">Staff 3</option>
+              </select>
+              <div id="selected-staff" class="flex flex-wrap gap-2 mt-4"></div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="mb-6">
+              <label
+                for="remarks"
+                class="block text-sm font-medium text-gray-900"
+              >
+                Observation
+              </label>
+              <textarea
+                name="observation"
+                id="observation"
+                rows="4"
+                class="mt-2 block h-[20vh] w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-green-600 hover:outline-green-500 sm:text-sm"
+              ></textarea>
+            </div>
           </div>
+
+          <!-- Modal Footer -->
           <div
-            class="mt-8 grid grid-cols-1 sm:grid-cols-6 gap-4 poppins-semibold"
+            class="mt-8 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 poppins-semibold"
           >
             <div class="sm:col-span-3">
               <button
@@ -228,7 +176,7 @@
             </div>
             <div class="sm:col-span-3">
               <button
-                id="close-add-crop-modal"
+                id="close-add-log-modal"
                 class="bg-gray-300 w-full rounded-lg py-2 text-black hover:bg-gray-400 focus:outline-none"
               >
                 Cancel
@@ -252,13 +200,12 @@
 
           <div class="flex justify-center items-center mb-6">
             <img
-                id="view-crop-image"
-              class="h-auto w-[100vw] object-cover md:h-[36vh]  rounded-lg"
-              src=""  
+              id="view-crop-image"
+              class="h-auto w-[100vw] object-cover md:h-[36vh] rounded-lg"
+              src=""
               alt="Crop Image"
             />
           </div>
-          
 
           <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div class="sm:col-span-3">
@@ -294,7 +241,7 @@
               </div>
             </div>
           </div>
-        <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mt-5">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mt-5">
             <div class="sm:col-span-3">
               <label
                 for="first-name"
@@ -344,7 +291,6 @@
               <option value="field2">Field 2</option>
               <option value="field3">Field 3</option>
             </select>
-          
           </div>
 
           <!-- Buttons Section -->
@@ -374,67 +320,66 @@
       </div>
     </div>
 
-     <!-- Delete Field Modal -->
+    <!-- Delete Field Modal -->
 
-     <div
-     id="delete-crop-modal"
-     class="z-[10000] fixed inset-0 bg-opacity-50 flex justify-center  items-center hidden opacity-0 transition-opacity duration-300 ease-out"
-   >
-     <div
-       class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[30vw] mr-[18vw] mb-[15vh] transform scale-95 transition-transform duration-300 ease-out"
-     >
-       <!-- Modal Header -->
-       <h1 class="text-center text-xl font-bold mb-4 text-gray-800">
-         Are you sure?
-       </h1>
-   
-       <!-- Modal Body -->
-       <div class="text-center p-4">
-         <svg
-           fill="currentColor"
-           viewBox="0 0 20 20"
-           class="group-hover:animate-bounce w-16 h-16 flex items-center justify-center text-red-500 mx-auto mb-8"
-         >
-           <path
-             clip-rule="evenodd"
-             d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-             fill-rule="evenodd"
-           ></path>
-         </svg>
-         <p class="font-medium text-sm text-gray-600 px-4">
-             Are you sure you want to delete <span id="delete-crop-name"></span> ? This action cannot be undone.
-         </p>
-       </div>
-   
-       <!-- Buttons Section -->
-       <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-         <!-- Delete Button -->
-         <div>
-           <button
-             id="btn-delete-crop"
-             class="w-full bg-red-600 rounded-lg py-2 px-4 text-white hover:bg-red-700 focus:outline-none transition duration-300"
-           >
-             Delete
-           </button>
-         </div>
-         <!-- Cancel Button -->
-         <div>
-           <button
-             id="close-delete-modal"
-             class="w-full bg-gray-300 rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none transition duration-300"
-           >
-             Cancel
-           </button>
-         </div>
-       </div>
-     </div>
-   </div>
-   
+    <div
+      id="delete-crop-modal"
+      class="z-[10000] fixed inset-0 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-300 ease-out"
+    >
+      <div
+        class="popup-modal bg-white rounded-lg p-8 w-full drop-shadow-2xl sm:w-[30vw] mr-[18vw] mb-[15vh] transform scale-95 transition-transform duration-300 ease-out"
+      >
+        <!-- Modal Header -->
+        <h1 class="text-center text-xl font-bold mb-4 text-gray-800">
+          Are you sure?
+        </h1>
 
+        <!-- Modal Body -->
+        <div class="text-center p-4">
+          <svg
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            class="group-hover:animate-bounce w-16 h-16 flex items-center justify-center text-red-500 mx-auto mb-8"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+              fill-rule="evenodd"
+            ></path>
+          </svg>
+          <p class="font-medium text-sm text-gray-600 px-4">
+            Are you sure you want to delete
+            <span id="delete-crop-name"></span> ? This action cannot be undone.
+          </p>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <!-- Delete Button -->
+          <div>
+            <button
+              id="btn-delete-crop"
+              class="w-full bg-red-600 rounded-lg py-2 px-4 text-white hover:bg-red-700 focus:outline-none transition duration-300"
+            >
+              Delete
+            </button>
+          </div>
+          <!-- Cancel Button -->
+          <div>
+            <button
+              id="close-delete-modal"
+              class="w-full bg-gray-300 rounded-lg py-2 px-4 text-black hover:bg-gray-400 focus:outline-none transition duration-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script
       type="module"
-      src="../../controller/CropManagementController.js"
+      src="../../controller/LogManagementController.js"
     ></script>
   </body>
 </html>

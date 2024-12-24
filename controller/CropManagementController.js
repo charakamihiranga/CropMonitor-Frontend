@@ -7,6 +7,8 @@ import {
   getCropByCode,
 } from "../model/CropModel.js";
 $(document).ready(function () {
+  let ascending = true;
+  let filteredCrops = [];
   const addCrop = setupModal(
     "#add-crop-modal",
     "#add-crop-btn",
@@ -54,83 +56,93 @@ $(document).ready(function () {
     }
   });
 
-  async function loadAllCrops() {
+  async function loadAllCrops(searchTerm = "") {
+    $("#loader").show(); // Show loader
     try {
       const crops = await getAllCrops();
+      filteredCrops = crops;
 
-      const $cropCardsContainer = $("#crop-cards");
-      $cropCardsContainer.empty(); // Clear the container before adding new data
+      // Filter crops based on search term
+      if (searchTerm) {
+        filteredCrops = crops.filter((crop) => {
+          const commonName = crop.cropCommonName?.toLowerCase() || "";
+          const scientificName = crop.cropScientificName?.toLowerCase() || "";
+          const category = crop.category?.toLowerCase() || "";
+          const cropSeason = crop.cropSeason?.toLowerCase() || "";
 
-      crops.forEach(function (crop) {
-        const $card = $("<div>")
-          .addClass(
-            "bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-          )
-          .on("click", function () {
-            openViewCropModal(crop.cropCode);
-          });
-
-        // Crop Image
-        const $cropImage = $("<img>")
-          .attr(
-            "src",
-            crop.cropImage
-              ? `data:image/png;base64,${crop.cropImage}`
-              : "https://via.placeholder.com/300"
-          )
-          .attr("alt", "Crop Image")
-          .addClass("w-full h-48 object-cover");
-
-        // Card Content
-        const $cardContent = $("<div>").addClass("p-4");
-
-        const $cropCommonName = $("<h2>")
-          .addClass("text-lg font-semibold text-gray-800 truncate")
-          .text(crop.cropCommonName);
-
-        const $cropScientificName = $("<p>")
-          .addClass("text-sm text-gray-500 truncate")
-          .html(
-            `Scientific Name: <span class="font-medium">${crop.cropScientificName}</span>`
+          return (
+            commonName.includes(searchTerm.toLowerCase()) ||
+            scientificName.includes(searchTerm.toLowerCase()) ||
+            category.includes(searchTerm.toLowerCase()) ||
+            cropSeason.includes(searchTerm.toLowerCase())
           );
+        });
+      }
 
-        const $cropCategory = $("<p>")
-          .addClass("text-sm text-gray-500 truncate")
-          .html(`Category: <span class="font-medium">${crop.category}</span>`);
-
-        const $cropSeason = $("<p>")
-          .addClass("text-sm text-gray-500 truncate")
-          .html(`Season: <span class="font-medium">${crop.cropSeason}</span>`);
-
-        const $cropCode = $("<p>")
-          .addClass("text-sm text-gray-500 truncate")
-          .html(`Code: <span class="font-medium">${crop.cropCode}</span>`);
-
-        // Append all elements to cardContent
-        $cardContent.append(
-          $cropCommonName,
-          $cropScientificName,
-          $cropCategory,
-          $cropSeason,
-          $cropCode
-        );
-
-        // Append image and content to the card
-        $card.append($cropImage, $cardContent);
-
-        // Append the card to the container
-        $cropCardsContainer.append($card);
-      });
+      sortCrops(); // Apply sorting after filtering
+      setCropData(filteredCrops); // Populate the table
     } catch (error) {
       console.error("Error loading crop data:", error);
       alert("Error loading crop data. Please try again.");
+    } finally {
+      $("#loader").hide(); // Hide loader after operation
     }
   }
 
+  // Sorting function for crops
+  function sortCrops() {
+    filteredCrops.sort((a, b) => {
+      const valueA = a.cropCommonName?.toLowerCase() || "";
+      const valueB = b.cropCommonName?.toLowerCase() || "";
+
+      return ascending
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
+    });
+  }
+
+  // Populate the crops table with the filtered data
+  function setCropData(crops) {
+    const tableBody = $(".vehicle-table-body");
+    tableBody.empty();
+
+    let row;
+
+    crops.forEach((crop, index) => {
+      row = $(`
+        <div class="table-row grid grid-cols-2 sm:grid-cols-4 gap-2 text-center bg-gray-100 poppins-medium text-xs sm:text-sm hover:bg-green-100 p-3 cursor-pointer rounded-lg mt-1 transition-all" data-index="${index}">
+            <div class="p-2 truncate">${crop.cropCommonName || "N/A"}</div>
+            <div class="p-2 truncate">${crop.cropScientificName || "N/A"}</div>
+            <div class="p-2 hidden sm:block truncate">${
+              crop.category || "N/A"
+            }</div>
+            <div class="p-2 truncate">${crop.cropSeason || "N/A"}</div>
+        </div>
+      `);
+
+      tableBody.append(row);
+      row.on("click", function () {
+        // Return the selected crop object
+        const selectedCrop = crops[index];
+        openViewCropModal(selectedCrop.cropCode);
+      });
+    });
+  }
+
+  // Event listeners for sorting headers
+  $("#sort-category").on("click", () => {
+    ascending = !ascending;
+    $("#sort-category").toggleClass("fa-sort-down fa-sort-up");
+    sortCrops(); // Reapply sorting after clicking on the column
+    setCropData(filteredCrops); // Re-render the sorted table data
+  });
+
   // codes for opening view crop modal
   async function openViewCropModal(cropCode) {
+    // Load the specific crop data by cropCode
     const cropByCropCode = await getCropByCode(cropCode);
 
+    // Populate modal with crop details
     $("#view-common-name").val(cropByCropCode.cropCommonName);
     $("#view-scientific-name").val(cropByCropCode.cropScientificName);
     $("#view-category").val(cropByCropCode.category);
@@ -142,28 +154,34 @@ $(document).ready(function () {
         ? `data:image/png;base64,${cropByCropCode.cropImage}`
         : "https://via.placeholder.com/300"
     );
-    const fieldByFieldCode = await getFieldByCode(cropByCropCode.fieldCode);
 
-    const fieldName = fieldByFieldCode ? `${fieldByFieldCode.fieldName}`.trim() : "Not Allocated";
+    // Load field dropdown data
+    const fieldByFieldCode = await getFieldByCode(cropByCropCode.fieldCode);
     loadFieldDataToDropDown(fieldByFieldCode.fieldCode);
 
+    // Open modal
     viewCrop.open();
 
-    $("#btn-delete").on("click", function () {
-      $("delete-crop-name").text(cropByCropCode.cropCommonName);
-      viewCrop.close();
-      deletecrop.open();
-      $("#btn-delete-crop").on("click", function () {
-        deleteCrop(cropByCropCode.cropCode);
+    // Handle the update button click
+    $("#btn-update")
+      .off("click")
+      .on("click", async function () {
+        await updateCrop(cropByCropCode.cropCode); // Pass the specific cropCode to the update function
       });
-    });
 
-    $("#btn-update").on("click", function () {
-      updateCrop(cropByCropCode.cropCode);
-    });
+    // Handle delete functionality
+    $("#btn-delete")
+      .off("click")
+      .on("click", function () {
+        $("delete-crop-name").text(cropByCropCode.cropCommonName);
+        viewCrop.close();
+        deletecrop.open();
+        $("#btn-delete-crop").on("click", function () {
+          deleteCrop(cropByCropCode.cropCode);
+        });
+      });
   }
 
-  // Update crop button
   async function updateCrop(cropCode) {
     const cropCommonName = $("#view-common-name").val();
     const cropScientificName = $("#view-scientific-name").val();
@@ -177,12 +195,13 @@ $(document).ready(function () {
     crop.append("category", category);
     crop.append("season", cropSeason);
     crop.append("fieldCode", fieldCode);
+
     try {
       const response = await updateCropByCode(cropCode, crop);
       if (response.status === 204) {
         viewCrop.close();
         clearFields();
-        loadAllCrops();
+        loadAllCrops(); // Reload the crops after update, but ensure this is only done after the specific crop update
         alert(response.message);
       }
     } catch (error) {
@@ -291,6 +310,14 @@ $(document).ready(function () {
   }
 
   handleFileUpload("crop-image", "crop-preview", "file-upload");
+
+  // Listen for search bar updates from parent window (dashboard)
+  window.addEventListener("message", (event) => {
+    if (event.data.type === "SEARCH_UPDATE") {
+      const searchQuery = event.data.query;
+      loadAllCrops(searchQuery); // Refetch and filter data based on search term
+    }
+  });
 
   // initial setup
   loadFieldDataToDropDown();
