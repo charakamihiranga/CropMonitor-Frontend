@@ -1,21 +1,58 @@
 import { getAllCrops } from "../model/CropModel.js";
 import { getAllFields } from "../model/FieldModel.js";
-import { saveLog } from "../model/LogModel.js";
+import { getLogs, saveLog } from "../model/LogModel.js";
 import { getStaff } from "../model/StaffModel.js";
 
 $(document).ready(function () {
+  const addLogModal = setupModal(
+    "#add-log-modal",
+    "#add-log-btn",
+    "#close-add-log-modal"
+  );
 
+  async function getAllLogs() {
+    try {
+      const logs = (await getLogs()) || [];
+      $("#logContainer").empty();
+      logs.forEach((log) => {
+        const card = `
+            <div class="bg-white bg-green-200 border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer" data-log-code="${
+              log.logCode
+            }">
+           <img
+              src="data:image/jpeg;base64,${log.observedImage}"
+              alt="Observation Image"
+              class="w-full h-56 object-cover rounded-t-xl"
+            />
+              <div class="p-4 px-6">
+                <p class="text-sm text-gray-500 mt-2 mb-8">
+               <span class="font-medium text-sm text-gray-700">${
+                    log.observation
+                  }</span>
+                </p>
+                <p class="text-xs text-black font-bold mt-1 mb-2">
+                  ${new Date(log.logDate).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          `;
+        $("#logContainer").append(card);
+      });
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+      alert("Failed to load logs. Please try again later.");
+    }
+  }
 
-    const addLogModal = setupModal(
-        "#add-log-modal",
-        "#add-log-btn",
-        "#close-add-log-modal"
-    );
+  $("#logContainer").on("click", "div[data-log-code]", function () {
+    const logCode = $(this).data("log-code");
+    alert(`Log Code: ${logCode}`);
+  });
 
   // handle save log button click
   $("#btn-save").on("click", async function () {
-    const observation = $('#observation').val();
-    const observedImage = $('#log-image')[0].files[0];
+    const observation = $("#observation").val();
+    const observedImage = $("#log-image")[0].files[0];
     const cropCodes = [];
     $("#selected-crop span").each(function () {
       cropCodes.push($(this).attr("data-cropCode"));
@@ -29,30 +66,25 @@ $(document).ready(function () {
       staffIds.push($(this).attr("data-staffId"));
     });
 
-    const formData = new FormData(); 
+    const formData = new FormData();
     formData.append("observation", observation);
     formData.append("observedImage", observedImage);
     staffIds.forEach((staffId) => formData.append("staffIds", staffId));
     fieldCodes.forEach((fieldCode) => formData.append("fieldCodes", fieldCode));
     cropCodes.forEach((cropCode) => formData.append("cropCodes", cropCode));
-    
 
     try {
-      
       const response = await saveLog(formData);
       if (response.status === 201) {
         alert("Log saved successfully.");
         addLogModal.close();
         clearFields();
       }
-
     } catch (error) {
       console.error("Error saving log:", error);
       alert("Error saving log. Please try again.");
-      
     }
-    
-  });  
+  });
 
   // Load crop data into the dropdowns
   async function loadCropDataToDropdown(selectedCropIds = []) {
@@ -66,7 +98,7 @@ $(document).ready(function () {
         cropData.forEach((crop) => {
           const selected = selectedCropIds.includes(crop.cropCode)
             ? "selected"
-            : ""; 
+            : "";
           dropDown.append(
             `<option value="${crop.cropCode}" ${selected} data-name="${crop.cropCommonName}">${crop.cropCommonName}</option>`
           );
@@ -76,7 +108,7 @@ $(document).ready(function () {
       console.error("Error loading crop data:", error);
       alert("Error loading crop data. Please try again.");
     }
-  }  
+  }
 
   // Load field data into the dropdowns
   async function loadFieldDataToDropdown(selectedFieldIds = []) {
@@ -90,7 +122,7 @@ $(document).ready(function () {
         fieldData.forEach((field) => {
           const selected = selectedFieldIds.includes(field.fieldCode)
             ? "selected"
-            : ""; 
+            : "";
           dropDown.append(
             `<option value="${field.fieldCode}" ${selected} data-name="${field.fieldName}">${field.fieldName}</option>`
           );
@@ -100,7 +132,7 @@ $(document).ready(function () {
       console.error("Error loading field data:", error);
       alert("Error loading field data. Please try again.");
     }
-  } 
+  }
 
   // Load staff data into the dropdowns
   async function loadStaffDataToDropdown(selectedStaffIds = []) {
@@ -129,7 +161,7 @@ $(document).ready(function () {
   }
 
   // field badge management
-$("#field-dropdown").on("change", function () {
+  $("#field-dropdown").on("change", function () {
     const selectedOption = $(this).find(":selected");
     if (selectedOption.val()) {
       addFieldBadge(selectedOption.val(), selectedOption.text());
@@ -148,7 +180,6 @@ $("#field-dropdown").on("change", function () {
       }
       $(this).prop("selectedIndex", -1); // Clear selection after adding badges
     });
-
 
   // Function to add a staff badge (modified to prevent duplicates)
   function addFieldBadge(fieldCode, fieldName) {
@@ -201,7 +232,6 @@ $("#field-dropdown").on("change", function () {
       $(this).prop("selectedIndex", -1); // Clear selection after adding badges
     });
 
-
   // Function to add a staff badge (modified to prevent duplicates)
   function addCropBadge(cropCode, cropName) {
     const existingBadge = $(
@@ -230,8 +260,6 @@ $("#field-dropdown").on("change", function () {
     $("#crop-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
   }
-
-
 
   // Staff badge management
   $("#staff-dropdown").on("change", function () {
@@ -323,36 +351,36 @@ $("#field-dropdown").on("change", function () {
     $("#selected-staff").empty();
     $("#selected-field").empty();
     $("#selected-crop").empty();
-    }
+  }
 
-    // clear fields
-    function clearFields() {
-        $("#log-image").val("");
-        $("#log-preview").attr("src", "").addClass("hidden");
-        $("#file-upload").removeClass("hidden");
-        $("#crop-preview").addClass("hidden").attr("src", "");
-        $("#staff-dropdown").val("");
-        $("#remarks").val("");
-        removeAllBadges();
-    }
+  // clear fields
+  function clearFields() {
+    $("#log-image").val("");
+    $("#log-preview").attr("src", "").addClass("hidden");
+    $("#file-upload").removeClass("hidden");
+    $("#crop-preview").addClass("hidden").attr("src", "");
+    $("#staff-dropdown").val("");
+    $("#remarks").val("");
+    removeAllBadges();
+  }
 
-    // handle file upload preview
-    function handleFileUpload(inputId, previewId, containerId) {
-        $("#" + inputId).on("change", function () {
-          const file = this.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              $("#" + previewId).attr("src", e.target.result); // Set the image preview
-              $("#" + previewId).removeClass("hidden");
-              $("#" + containerId).addClass("hidden"); // Hide the file upload div
-            };
-            reader.readAsDataURL(file);
-          }
-        });
+  // handle file upload preview
+  function handleFileUpload(inputId, previewId, containerId) {
+    $("#" + inputId).on("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          $("#" + previewId).attr("src", e.target.result); // Set the image preview
+          $("#" + previewId).removeClass("hidden");
+          $("#" + containerId).addClass("hidden"); // Hide the file upload div
+        };
+        reader.readAsDataURL(file);
       }
+    });
+  }
 
-    // Setup modal functionality
+  // Setup modal functionality
   function setupModal(modalSelector, triggerSelector, closeSelector) {
     const $modal = $(modalSelector);
     const $modalContent = $modal.find(".popup-modal");
@@ -388,8 +416,8 @@ $("#field-dropdown").on("change", function () {
   }
 
   handleFileUpload("log-image", "log-preview", "file-upload");
+  getAllLogs();
   loadStaffDataToDropdown();
   loadFieldDataToDropdown();
   loadCropDataToDropdown();
-
 });
