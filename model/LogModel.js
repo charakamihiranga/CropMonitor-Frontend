@@ -17,8 +17,8 @@ export async function saveLog(log) {
                 Authorization: `Bearer ${token}`,
             },
             data: log,
-            processData: false, // Ensure FormData is sent as is
-            contentType: false, // Let the browser set the correct boundary
+            processData: false, 
+            contentType: false, 
         });
 
         return { status: 201, message: "Log saved successfully", data: response };
@@ -27,10 +27,33 @@ export async function saveLog(log) {
             "An error occurred while saving the log. Please try again.";
         if (error.status === 400) {
             errorMessage = "Bad request. Please check the provided data.";
-        } else if (error.responseJSON && error.responseJSON.message) {
+        } else if (error.responseJSON?.message) {
             errorMessage = error.responseJSON.message;
         }
         console.error("Error:", error);
         return { status: error.status, message: errorMessage };
+    }
+}
+
+export async function getLogs() {
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return { status: 401, message: "Unauthorized: JWT token missing." };
+    }
+
+    try {
+        const response = await $.ajax({
+            url: `${API_URL}/monitoringlog`,
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response;
+    } catch (error) {
+        console.error("Error fetching log data:", error);
+        return { status: error.status, message: "Error fetching log data" };
     }
 }

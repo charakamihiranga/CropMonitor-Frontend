@@ -6,6 +6,7 @@ import {
   getFieldByCode,
   updateFieldByCode
 } from "../model/FieldModel.js";
+import { base64ToFile } from "../assets/js/util.js";
 
 
 $(document).ready(function () {
@@ -116,16 +117,12 @@ $(document).ready(function () {
     let image2 = $("#up-image-2")[0].files[0];
 
     if (!image1) {
-      console.error(
-        "Image 1 not updated. Using existing image for field:",
-      );
+     image1 = base64ToFile(field.fieldImage1, "fieldImage1.jpg");
       
     }
 
     if (!image2) {
-      console.error(
-        "Image 2 not updated. Using existing image for field:",
-      );
+    image2 = base64ToFile(field.fieldImage2, "fieldImage2.jpg");
       
     }
 
@@ -136,9 +133,7 @@ $(document).ready(function () {
     updatedField.append("latitude", field.fieldLocation.y);
     updatedStaffIds.forEach((id) => updatedField.append("staffIds", id));
     updatedField.append("fieldImage1", image1);
-    console.log("Image 1:", image1);
     updatedField.append("fieldImage2", image2);
-    console.log("Image 2:", image2);
     try {
       let response = await updateFieldByCode(field.fieldCode, updatedField);
       if (response.status === 204) {
