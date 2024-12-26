@@ -6,6 +6,7 @@ import {
   deleteCropByCode,
   getCropByCode,
 } from "../model/CropModel.js";
+import { base64ToFile } from "../assets/js/util.js";
 $(document).ready(function () {
   let ascending = true;
   let filteredCrops = [];
@@ -166,7 +167,7 @@ $(document).ready(function () {
     $("#btn-update")
       .off("click")
       .on("click", async function () {
-        await updateCrop(cropByCropCode.cropCode); // Pass the specific cropCode to the update function
+        await updateCrop(cropByCropCode.cropCode,cropByCropCode.cropImage); // Pass the specific cropCode to the update function
       });
 
     // Handle delete functionality
@@ -182,12 +183,17 @@ $(document).ready(function () {
       });
   }
 
-  async function updateCrop(cropCode) {
+  async function updateCrop(cropCode,cropImage) {
     const cropCommonName = $("#view-common-name").val();
     const cropScientificName = $("#view-scientific-name").val();
     const category = $("#view-category").val();
     const cropSeason = $("#view-crop-season").val();
     const fieldCode = $("#view-field-dropdown").val();
+    let updateCropImage = $("#update-crop-image")[0].files[0];
+
+    if (!updateCropImage) {
+      updateCropImage = base64ToFile(cropImage, "image.jpg");
+    }
 
     const crop = new FormData();
     crop.append("commonName", cropCommonName);
@@ -195,6 +201,7 @@ $(document).ready(function () {
     crop.append("category", category);
     crop.append("season", cropSeason);
     crop.append("fieldCode", fieldCode);
+    crop.append("cropImage", updateCropImage);
 
     try {
       const response = await updateCropByCode(cropCode, crop);
@@ -234,6 +241,7 @@ $(document).ready(function () {
     $("#crop-season").val("");
     $("#field-dropdown").val("");
     $("#crop-image").val("");
+    $("#update-crop-image").val("");
   }
 
   // Load staff data into the dropdowns
@@ -310,6 +318,7 @@ $(document).ready(function () {
   }
 
   handleFileUpload("crop-image", "crop-preview", "file-upload");
+  handleFileUpload("update-crop-image", "update-crop-preview", "update-file-upload");
 
   // Listen for search bar updates from parent window (dashboard)
   window.addEventListener("message", (event) => {

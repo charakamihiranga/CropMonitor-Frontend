@@ -1,3 +1,4 @@
+import { base64ToFile } from "../assets/js/util.js";
 import { getAllCrops } from "../model/CropModel.js";
 import { getAllFields } from "../model/FieldModel.js";
 import { getLogs, saveLog } from "../model/LogModel.js";
@@ -9,40 +10,37 @@ $(document).ready(function () {
     "#add-log-btn",
     "#close-add-log-modal"
   );
+async function getAllLogs() {
+  try {
+    const logs = (await getLogs()) || [];
 
-  async function getAllLogs() {
-    try {
-      const logs = (await getLogs()) || [];
-      $("#logContainer").empty();
-      logs.forEach((log) => {
-        const card = `
-            <div class="bg-white bg-green-200 border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer" data-log-code="${
-              log.logCode
-            }">
-           <img
-              src="data:image/jpeg;base64,${log.observedImage}"
-              alt="Observation Image"
-              class="w-full h-56 object-cover rounded-t-xl"
-            />
-              <div class="p-4 px-6">
-                <p class="text-sm text-gray-500 mt-2 mb-8">
-               <span class="font-medium text-sm text-gray-700">${
-                    log.observation
-                  }</span>
-                </p>
-                <p class="text-xs text-black font-bold mt-1 mb-2">
-                  ${new Date(log.logDate).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-          `;
-        $("#logContainer").append(card);
-      });
-    } catch (error) {
-      console.error("Error fetching logs:", error);
-      alert("Failed to load logs. Please try again later.");
-    }
+
+    
+
+    $("#logContainer").empty();
+
+    logs.forEach((log) => {
+      const card = `
+        <div class="bg-white bg-green-200 border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col" data-log-code="${log.logCode}">
+          <img src="data:image/jpeg;base64,${log.observedImage}" alt="Observation Image" class="w-full h-56 object-cover rounded-t-xl" />
+          <div class="p-4 px-6 flex-grow">
+            <p class="text-sm text-gray-500 mt-2 mb-8">
+              <span class="font-medium text-sm text-gray-700">${log.observation}</span>
+            </p>
+            <p class="text-xs text-black font-bold mt-1 mb-2">
+              ${new Date(log.logDate).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+      `;
+      $("#logContainer").append(card);
+    });
+  } catch (error) {
+    console.error("Error fetching logs:", error);
+    alert("Failed to load logs. Please try again later.");
   }
+}
+
 
   $("#logContainer").on("click", "div[data-log-code]", function () {
     const logCode = $(this).data("log-code");
@@ -79,6 +77,7 @@ $(document).ready(function () {
         alert("Log saved successfully.");
         addLogModal.close();
         clearFields();
+        getAllCrops();
       }
     } catch (error) {
       console.error("Error saving log:", error);
@@ -136,7 +135,7 @@ $(document).ready(function () {
 
   // Load staff data into the dropdowns
   async function loadStaffDataToDropdown(selectedStaffIds = []) {
-    // Accept an array of selected IDs
+    // Accept an array of selected ID
     try {
       const staffData = await getStaff();
       const dropDowns = ["#staff-dropdown", "#view-staff-dropdown"];
