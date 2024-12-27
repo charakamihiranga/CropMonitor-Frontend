@@ -1,7 +1,7 @@
 import { base64ToFile } from "../assets/js/util.js";
 import { getAllCrops, getCropByCode } from "../model/CropModel.js";
 import { getAllFields, getFieldByCode } from "../model/FieldModel.js";
-import { getLogByCode, getLogs, saveLog } from "../model/LogModel.js";
+import { deleteLog, getLogByCode, getLogs, saveLog } from "../model/LogModel.js";
 import { getStaff, getStaffById } from "../model/StaffModel.js";
 
 $(document).ready(function () {
@@ -12,21 +12,32 @@ $(document).ready(function () {
   );
   const viewLogModal = setupModal(
     "#view-log-modal",
-    "#btn-update",
+    "#view-log-btn",
     "#view-log-close"
   );
-async function getAllLogs() {
-  try {
-    const logs = (await getLogs()) || [];
-    $("#logContainer").empty();
+  const deleteModal = setupModal(
+    "#delete-log-modal",
+    "#btn-delete",
+    "#close-delete-modal"
+  );
+  async function getAllLogs() {
+    try {
+      const logs = (await getLogs()) || [];
+      $("#logContainer").empty();
 
-    logs.forEach((log) => {
-      const card = `
-        <div class="bg-white bg-green-200 border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col h-96" data-log-code="${log.logCode}">
-          <img src="data:image/jpeg;base64,${log.observedImage}" alt="Observation Image" class="w-full h-40 object-cover rounded-t-xl" />
+      logs.forEach((log) => {
+        const card = `
+        <div class="bg-white bg-green-200 border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col h-96" data-log-code="${
+          log.logCode
+        }">
+          <img src="data:image/jpeg;base64,${
+            log.observedImage
+          }" alt="Observation Image" class="w-full h-40 object-cover rounded-t-xl" />
           <div class="p-4 px-6 flex flex-col flex-grow">
             <p class="text-sm text-gray-500 mt-2  line-clamp-6">
-              <span class="font-medium text-sm text-gray-700">${log.observation}</span>
+              <span class="font-medium text-sm text-gray-700">${
+                log.observation
+              }</span>
             </p>
             <p class="text-xs text-black font-bold mt-auto">
               ${new Date(log.logDate).toLocaleDateString()}
@@ -34,15 +45,13 @@ async function getAllLogs() {
           </div>
         </div>
       `;
-      $("#logContainer").append(card);
-    });
-    
-  } catch (error) {
-    console.error("Error fetching logs:", error);
-    alert("Failed to load logs. Please try again later.");
+        $("#logContainer").append(card);
+      });
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+      alert("Failed to load logs. Please try again later.");
+    }
   }
-}
-
 
   $("#logContainer").on("click", "div[data-log-code]", function () {
     const logCode = $(this).data("log-code");
@@ -51,12 +60,14 @@ async function getAllLogs() {
 
   async function openViewLogModal(logCode) {
     const logByCode = await getLogByCode(logCode);
-    console.log(logByCode);
-    
+
     if (logByCode) {
-      $("#view-log-image").attr("src", `data:image/jpeg;base64,${logByCode.observedImage}`);
+      $("#view-log-image").attr(
+        "src",
+        `data:image/jpeg;base64,${logByCode.observedImage}`
+      );
       $("#view-observation").val(logByCode.observation);
-      logByCode.staffIds.forEach((staffId)=>{
+      logByCode.staffIds.forEach((staffId) => {
         getStaffById(staffId).then((staffMember) => {
           addStaffBadgetoView(
             staffMember.staffId,
@@ -65,28 +76,41 @@ async function getAllLogs() {
         });
       });
       logByCode.fieldCodes.forEach((fieldCode) => {
-        getFieldByCode(fieldCode).then((field) => {
-          addFieldBadgeToView(
-            field.fieldCode,
-            field.fieldName
-          );
-        }).catch((error) => {
-          console.error("Error fetching field by code:", error);
-        });
+        getFieldByCode(fieldCode)
+          .then((field) => {
+            addFieldBadgeToView(field.fieldCode, field.fieldName);
+          })
+          .catch((error) => {
+            console.error("Error fetching field by code:", error);
+          });
       });
-      logByCode.cropCodes.forEach((cropCode)=>{
+      logByCode.cropCodes.forEach((cropCode) => {
         getCropByCode(cropCode).then((crop) => {
-          addCropBadgetoView(
-            crop.cropCode,
-            crop.cropCommonName
-          );
+          addCropBadgetoView(crop.cropCode, crop.cropCommonName);
         });
       });
     }
-
-
     viewLogModal.open();
-    
+
+    $("#btn-delete-log").on("click", function () {
+      handleBtnDelete(logCode);
+    });
+
+  }
+
+  async function handleBtnDelete(logCode) {
+    try {
+      const response = await deleteLog(logCode);
+      if (response.status === 204) {
+        viewLogModal.close();
+        alert("Log deleted successfully.");
+        deleteModal.close();
+        getAllLogs();
+      }
+    } catch (error) {
+      console.error("Error deleting log:", error);
+      alert("Error deleting log. Please try again.");
+    }
   }
 
   // handle save log button click
@@ -126,6 +150,8 @@ async function getAllLogs() {
       alert("Error saving log. Please try again.");
     }
   });
+
+
 
   // Load crop data into the dropdowns
   async function loadCropDataToDropdown(selectedCropIds = []) {
@@ -200,7 +226,6 @@ async function getAllLogs() {
       alert("Error loading staff data. Please try again.");
     }
   }
-  
 
   // field badge management
   $("#field-dropdown").on("change", function () {
@@ -212,17 +237,16 @@ async function getAllLogs() {
   });
 
   $("#view-field-dropdown")
-  .prop("multiple", true)
-  .on("change", function () {
-    // Added multiple prop
-    for (const option of this.selectedOptions) {
-      const fieldCode = option.value;
-      const fieldName = option.text;
-      addFieldBadgeToView(fieldCode, fieldName);
-    }
-    $(this).prop("selectedIndex", -1); // Clear selection after adding badges
-  });
-
+    .prop("multiple", true)
+    .on("change", function () {
+      // Added multiple prop
+      for (const option of this.selectedOptions) {
+        const fieldCode = option.value;
+        const fieldName = option.text;
+        addFieldBadgeToView(fieldCode, fieldName);
+      }
+      $(this).prop("selectedIndex", -1); // Clear selection after adding badges
+    });
 
   $("#field-dropdown")
     .prop("multiple", true)
@@ -256,7 +280,6 @@ async function getAllLogs() {
       });
     }
   }
-
 
   function addFieldBadgeToView(fieldCode, fieldName) {
     const existingBadge = $(
@@ -305,16 +328,16 @@ async function getAllLogs() {
   });
 
   $("#view-crop-dropdown")
-  .prop("multiple", true)
-  .on("change", function () {
-    // Added multiple prop
-    for (const option of this.selectedOptions) {
-      const cropCode = option.value;
-      const cropName = option.text;
-      addCropBadgetoView(cropCode, cropName);
-    }
-    $(this).prop("selectedIndex", -1); // Clear selection after adding badges
-  });
+    .prop("multiple", true)
+    .on("change", function () {
+      // Added multiple prop
+      for (const option of this.selectedOptions) {
+        const cropCode = option.value;
+        const cropName = option.text;
+        addCropBadgetoView(cropCode, cropName);
+      }
+      $(this).prop("selectedIndex", -1); // Clear selection after adding badges
+    });
 
   $("#crop-dropdown")
     .prop("multiple", true)
@@ -489,8 +512,6 @@ async function getAllLogs() {
     removeAllBadges();
   }
 
-
-
   // Setup modal functionality
   function setupModal(modalSelector, triggerSelector, closeSelector) {
     const $modal = $(modalSelector);
@@ -526,25 +547,28 @@ async function getAllLogs() {
     };
   }
 
-    // handle file upload preview
-    function handleFileUpload(inputId, previewId, containerId) {
-      $("#" + inputId).on("change", function () {
-        const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            $("#" + previewId).attr("src", e.target.result); // Set the image preview
-            $("#" + previewId).removeClass("hidden");
-            $("#" + containerId).addClass("hidden"); // Hide the file upload div
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    }
-  
+  // handle file upload preview
+  function handleFileUpload(inputId, previewId, containerId) {
+    $("#" + inputId).on("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          $("#" + previewId).attr("src", e.target.result); // Set the image preview
+          $("#" + previewId).removeClass("hidden");
+          $("#" + containerId).addClass("hidden"); // Hide the file upload div
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
 
   handleFileUpload("log-image", "log-preview", "file-upload");
-  handleFileUpload("update-log-image", "update-log-preview", "update-file-upload");
+  handleFileUpload(
+    "update-log-image",
+    "update-log-preview",
+    "update-file-upload"
+  );
   getAllLogs();
   loadStaffDataToDropdown();
   loadFieldDataToDropdown();

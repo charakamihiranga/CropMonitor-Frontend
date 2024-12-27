@@ -35,6 +35,29 @@ export async function saveLog(log) {
     }
 }
 
+export async function deleteLog(logCode) {
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return { status: 401, message: "Unauthorized: JWT token missing." };
+    }
+
+    try {
+         await $.ajax({
+            url: `${API_URL}/monitoringlog/${logCode}`,
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return { status: 204, message: "Log deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting log:", error);
+        return { status: error.status, message: "Error deleting log" };
+    }
+}
+
 export async function getLogByCode(logCode) {
     const token = getJwtTokenFromCookies();
     if (!token) {
