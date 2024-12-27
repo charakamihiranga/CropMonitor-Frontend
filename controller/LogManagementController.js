@@ -1,7 +1,7 @@
 import { base64ToFile } from "../assets/js/util.js";
 import { getAllCrops, getCropByCode } from "../model/CropModel.js";
 import { getAllFields, getFieldByCode } from "../model/FieldModel.js";
-import { deleteLog, getLogByCode, getLogs, saveLog } from "../model/LogModel.js";
+import { deleteLog, getLogByCode, getLogs, saveLog, updateLog } from "../model/LogModel.js";
 import { getStaff, getStaffById } from "../model/StaffModel.js";
 
 $(document).ready(function () {
@@ -96,8 +96,52 @@ $(document).ready(function () {
       handleBtnDelete(logCode);
     });
 
+    $("#btn-update").on("click", function () {
+      handleUpdateLog(logCode, logByCode.observedImage);
+    });
   }
 
+  //handle update button click
+  async function handleUpdateLog(logCode, image){
+    const observation = $("#view-observation").val();
+    let observedImage = $("#update-log-image")[0].files[0];
+    const cropCodes = [];
+    $("#view-selected-crop span").each(function () {
+      cropCodes.push($(this).attr("data-cropCode"));
+    });
+    const fieldCodes = [];
+    $("#view-selected-field span").each(function () {
+      fieldCodes.push($(this).attr("data-fieldCode"));
+    });
+    const staffIds = [];
+    $("#view-selected-staff span").each(function () {
+      staffIds.push($(this).attr("data-staffId"));
+    }); 
+    if(!observedImage){
+      observedImage = base64ToFile(image);
+    }
+    
+    const formData = new FormData();
+    formData.append("observation", observation);
+    formData.append("observedImage", observedImage);
+    staffIds.forEach((staffId) => formData.append("staffIds", staffId));
+    fieldCodes.forEach((fieldCode) => formData.append("fieldCodes", fieldCode));
+    cropCodes.forEach((cropCode) => formData.append("cropCodes", cropCode));
+    try {
+      const response = await updateLog(logCode, formData);
+      if (response.status === 200) {
+        alert("Log updated successfully.");
+        viewLogModal.close();
+        getAllLogs();
+      }
+    } catch (error) {
+      console.error("Error updating log:", error);
+      alert("Error updating log. Please try again.");
+    }
+
+  }
+  
+  // handle delete button click
   async function handleBtnDelete(logCode) {
     try {
       const response = await deleteLog(logCode);
@@ -499,16 +543,27 @@ $(document).ready(function () {
     $("#selected-staff").empty();
     $("#selected-field").empty();
     $("#selected-crop").empty();
+    $("#view-selected-crop").empty();
+    $("#view-selected-crop").empty();
+    $("#view-selected-crop").empty();
   }
 
-  // clear fields
+  // Clear fields
   function clearFields() {
     $("#log-image").val("");
     $("#log-preview").attr("src", "").addClass("hidden");
     $("#file-upload").removeClass("hidden");
-    $("#crop-preview").addClass("hidden").attr("src", "");
+    $("#update-log-image").val("");
+    $("#update-log-preview").attr("src", "").addClass("hidden");
+    $("#update-file-upload").removeClass("hidden");
+    $("#observation").val("");
+    $("#view-observation").val("");
     $("#staff-dropdown").val("");
-    $("#remarks").val("");
+    $("#view-staff-dropdown").val("");
+    $("#field-dropdown").val("");
+    $("#view-field-dropdown").val("");
+    $("#crop-dropdown").val("");
+    $("#view-crop-dropdown").val("");
     removeAllBadges();
   }
 
