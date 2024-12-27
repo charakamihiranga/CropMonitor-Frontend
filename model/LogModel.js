@@ -35,6 +35,29 @@ export async function saveLog(log) {
     }
 }
 
+export async function getLogByCode(logCode) {
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return { status: 401, message: "Unauthorized: JWT token missing." };
+    }
+
+    try {
+        const response = await $.ajax({
+            url: `${API_URL}/monitoringlog/${logCode}`,
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response;
+    } catch (error) {
+        console.error("Error fetching log data:", error);
+        return { status: error.status, message: "Error fetching log data" };
+    }
+}
+
 export async function getLogs() {
     const token = getJwtTokenFromCookies();
     if (!token) {

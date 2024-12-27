@@ -1,8 +1,8 @@
 import { base64ToFile } from "../assets/js/util.js";
-import { getAllCrops } from "../model/CropModel.js";
-import { getAllFields } from "../model/FieldModel.js";
-import { getLogs, saveLog } from "../model/LogModel.js";
-import { getStaff } from "../model/StaffModel.js";
+import { getAllCrops, getCropByCode } from "../model/CropModel.js";
+import { getAllFields, getFieldByCode } from "../model/FieldModel.js";
+import { getLogByCode, getLogs, saveLog } from "../model/LogModel.js";
+import { getStaff, getStaffById } from "../model/StaffModel.js";
 
 $(document).ready(function () {
   const addLogModal = setupModal(
@@ -10,24 +10,25 @@ $(document).ready(function () {
     "#add-log-btn",
     "#close-add-log-modal"
   );
+  const viewLogModal = setupModal(
+    "#view-log-modal",
+    "#btn-update",
+    "#view-log-close"
+  );
 async function getAllLogs() {
   try {
     const logs = (await getLogs()) || [];
-
-
-    
-
     $("#logContainer").empty();
 
     logs.forEach((log) => {
       const card = `
-        <div class="bg-white bg-green-200 border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col" data-log-code="${log.logCode}">
-          <img src="data:image/jpeg;base64,${log.observedImage}" alt="Observation Image" class="w-full h-56 object-cover rounded-t-xl" />
-          <div class="p-4 px-6 flex-grow">
-            <p class="text-sm text-gray-500 mt-2 mb-8">
+        <div class="bg-white bg-green-200 border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col h-96" data-log-code="${log.logCode}">
+          <img src="data:image/jpeg;base64,${log.observedImage}" alt="Observation Image" class="w-full h-40 object-cover rounded-t-xl" />
+          <div class="p-4 px-6 flex flex-col flex-grow">
+            <p class="text-sm text-gray-500 mt-2  line-clamp-6">
               <span class="font-medium text-sm text-gray-700">${log.observation}</span>
             </p>
-            <p class="text-xs text-black font-bold mt-1 mb-2">
+            <p class="text-xs text-black font-bold mt-auto">
               ${new Date(log.logDate).toLocaleDateString()}
             </p>
           </div>
@@ -35,6 +36,7 @@ async function getAllLogs() {
       `;
       $("#logContainer").append(card);
     });
+    
   } catch (error) {
     console.error("Error fetching logs:", error);
     alert("Failed to load logs. Please try again later.");
@@ -44,8 +46,48 @@ async function getAllLogs() {
 
   $("#logContainer").on("click", "div[data-log-code]", function () {
     const logCode = $(this).data("log-code");
-    alert(`Log Code: ${logCode}`);
+    openViewLogModal(logCode);
   });
+
+  async function openViewLogModal(logCode) {
+    const logByCode = await getLogByCode(logCode);
+    console.log(logByCode);
+    
+    if (logByCode) {
+      $("#view-log-image").attr("src", `data:image/jpeg;base64,${logByCode.observedImage}`);
+      $("#view-observation").val(logByCode.observation);
+      logByCode.staffIds.forEach((staffId)=>{
+        getStaffById(staffId).then((staffMember) => {
+          addStaffBadgetoView(
+            staffMember.staffId,
+            `${staffMember.firstName} ${staffMember.lastName}`
+          );
+        });
+      });
+      logByCode.fieldCodes.forEach((fieldCode) => {
+        getFieldByCode(fieldCode).then((field) => {
+          addFieldBadgeToView(
+            field.fieldCode,
+            field.fieldName
+          );
+        }).catch((error) => {
+          console.error("Error fetching field by code:", error);
+        });
+      });
+      logByCode.cropCodes.forEach((cropCode)=>{
+        getCropByCode(cropCode).then((crop) => {
+          addCropBadgetoView(
+            crop.cropCode,
+            crop.cropCommonName
+          );
+        });
+      });
+    }
+
+
+    viewLogModal.open();
+    
+  }
 
   // handle save log button click
   $("#btn-save").on("click", async function () {
@@ -158,6 +200,7 @@ async function getAllLogs() {
       alert("Error loading staff data. Please try again.");
     }
   }
+  
 
   // field badge management
   $("#field-dropdown").on("change", function () {
@@ -167,6 +210,19 @@ async function getAllLogs() {
       selectedOption.remove(); // Remove selected field from the dropdown
     }
   });
+
+  $("#view-field-dropdown")
+  .prop("multiple", true)
+  .on("change", function () {
+    // Added multiple prop
+    for (const option of this.selectedOptions) {
+      const fieldCode = option.value;
+      const fieldName = option.text;
+      addFieldBadgeToView(fieldCode, fieldName);
+    }
+    $(this).prop("selectedIndex", -1); // Clear selection after adding badges
+  });
+
 
   $("#field-dropdown")
     .prop("multiple", true)
@@ -201,11 +257,40 @@ async function getAllLogs() {
     }
   }
 
+
+  function addFieldBadgeToView(fieldCode, fieldName) {
+    const existingBadge = $(
+      "#view-selected-field span[data-fieldCode='" + fieldCode + "']"
+    );
+    if (!existingBadge.length) {
+      const badge = $("<span>")
+        .addClass(
+          "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
+        )
+        .attr("data-fieldCode", fieldCode)
+        .html(`${fieldName} <i class="fas fa-times cursor-pointer"></i>`);
+
+      badge.appendTo("#view-selected-field");
+
+      badge.find("i").on("click", function () {
+        removeFieldBadgeFromView(fieldCode, fieldName, badge);
+      });
+      $("#view-field-dropdown option[value='" + fieldCode + "']").remove();
+    }
+  }
+
   // Function to remove a field badge (modified to add back to dropdown)
   function removeFieldBadge(fieldCode, fieldName, badgeElement) {
     const option = $("<option>").val(fieldCode).text(fieldName);
     $("#field-dropdown").append(option);
     $("#field-dropdown").val(""); // Ensure no option is selected after adding back
+    badgeElement.remove();
+  }
+
+  function removeFieldBadgeFromView(fieldCode, fieldName, badgeElement) {
+    const option = $("<option>").val(fieldCode).text(fieldName);
+    $("#view-field-dropdown").append(option);
+    $("#view-field-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
   }
 
@@ -217,6 +302,18 @@ async function getAllLogs() {
       addCropBadge(selectedOption.val(), selectedOption.text());
       selectedOption.remove(); // Remove selected field from the dropdown
     }
+  });
+
+  $("#view-crop-dropdown")
+  .prop("multiple", true)
+  .on("change", function () {
+    // Added multiple prop
+    for (const option of this.selectedOptions) {
+      const cropCode = option.value;
+      const cropName = option.text;
+      addCropBadgetoView(cropCode, cropName);
+    }
+    $(this).prop("selectedIndex", -1); // Clear selection after adding badges
   });
 
   $("#crop-dropdown")
@@ -252,11 +349,39 @@ async function getAllLogs() {
     }
   }
 
+  function addCropBadgetoView(cropCode, cropName) {
+    const existingBadge = $(
+      "#view-selected-crop span[data-cropCode='" + cropCode + "']"
+    );
+    if (!existingBadge.length) {
+      const badge = $("<span>")
+        .addClass(
+          "bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm flex items-center gap-2"
+        )
+        .attr("data-cropCode", cropCode)
+        .html(`${cropName} <i class="fas fa-times cursor-pointer"></i>`);
+
+      badge.appendTo("#view-selected-crop");
+
+      badge.find("i").on("click", function () {
+        removeCropBadgeFromView(cropCode, cropName, badge);
+      });
+      $("#view-crop-dropdown option[value='" + cropCode + "']").remove();
+    }
+  }
+
   // Function to remove a field badge (modified to add back to dropdown)
   function removeCropBadge(cropCode, cropName, badgeElement) {
     const option = $("<option>").val(cropCode).text(cropName);
     $("#crop-dropdown").append(option);
     $("#crop-dropdown").val(""); // Ensure no option is selected after adding back
+    badgeElement.remove();
+  }
+
+  function removeCropBadgeFromView(cropCode, cropName, badgeElement) {
+    const option = $("<option>").val(cropCode).text(cropName);
+    $("#view-crop-dropdown").append(option);
+    $("#view-crop-dropdown").val(""); // Ensure no option is selected after adding back
     badgeElement.remove();
   }
 
@@ -329,6 +454,7 @@ async function getAllLogs() {
       badge.find("i").on("click", function () {
         removeStaffBadgeFromView(staffId, staffName, badge);
       });
+      $("#view-staff-dropdown option[value='" + staffId + "']").remove();
     }
   }
 
@@ -363,21 +489,7 @@ async function getAllLogs() {
     removeAllBadges();
   }
 
-  // handle file upload preview
-  function handleFileUpload(inputId, previewId, containerId) {
-    $("#" + inputId).on("change", function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          $("#" + previewId).attr("src", e.target.result); // Set the image preview
-          $("#" + previewId).removeClass("hidden");
-          $("#" + containerId).addClass("hidden"); // Hide the file upload div
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
+
 
   // Setup modal functionality
   function setupModal(modalSelector, triggerSelector, closeSelector) {
@@ -414,7 +526,25 @@ async function getAllLogs() {
     };
   }
 
+    // handle file upload preview
+    function handleFileUpload(inputId, previewId, containerId) {
+      $("#" + inputId).on("change", function () {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            $("#" + previewId).attr("src", e.target.result); // Set the image preview
+            $("#" + previewId).removeClass("hidden");
+            $("#" + containerId).addClass("hidden"); // Hide the file upload div
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  
+
   handleFileUpload("log-image", "log-preview", "file-upload");
+  handleFileUpload("update-log-image", "update-log-preview", "update-file-upload");
   getAllLogs();
   loadStaffDataToDropdown();
   loadFieldDataToDropdown();
