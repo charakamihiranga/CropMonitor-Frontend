@@ -35,6 +35,85 @@ export async function saveLog(log) {
     }
 }
 
+export async function deleteLog(logCode) {
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return { status: 401, message: "Unauthorized: JWT token missing." };
+    }
+
+    try {
+         await $.ajax({
+            url: `${API_URL}/monitoringlog/${logCode}`,
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return { status: 204, message: "Log deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting log:", error);
+        return { status: error.status, message: "Error deleting log" };
+    }
+}
+
+export async function updateLog(logCode, log) {
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return { status: 401, message: "Unauthorized: JWT token missing." };
+    }
+
+    try {
+        const response = await $.ajax({
+            url: `${API_URL}/monitoringlog/${logCode}`,
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: log,
+            processData: false, 
+            contentType: false, 
+        });
+
+        return { status: 200, message: "Log updated successfully", data: response };
+    } catch (error) {
+        let errorMessage =
+            "An error occurred while updating the log. Please try again.";
+        if (error.status === 400) {
+            errorMessage = "Bad request. Please check the provided data.";
+        } else if (error.responseJSON?.message) {
+            errorMessage = error.responseJSON.message;
+        }
+        console.error("Error:", error);
+        return { status: error.status, message: errorMessage };
+    }
+}
+
+export async function getLogByCode(logCode) {
+    const token = getJwtTokenFromCookies();
+    if (!token) {
+        console.error("JWT token not found in cookies.");
+        return { status: 401, message: "Unauthorized: JWT token missing." };
+    }
+
+    try {
+        const response = await $.ajax({
+            url: `${API_URL}/monitoringlog/${logCode}`,
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response;
+    } catch (error) {
+        console.error("Error fetching log data:", error);
+        return { status: error.status, message: "Error fetching log data" };
+    }
+}
+
 export async function getLogs() {
     const token = getJwtTokenFromCookies();
     if (!token) {

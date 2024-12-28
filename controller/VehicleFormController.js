@@ -162,11 +162,13 @@ $(document).ready(() => {
   $(document).on("click", "#update-icon", function () {
     const rowIndex = $(this).closest(".table-row").data("index");
     const vehicle = filteredVehicleData[rowIndex];
-
+    
     // Populate modal fields with vehicle data
     $("#updated-vehicle-category").val(vehicle.vehicleCategory);
     $("#updated-license-plate-number").val(vehicle.licensePlateNumber);
-    $("#updated-fuel-type").val(vehicle.fuelType);
+    $("#updated-fuel-type").html(
+      `<option value="${vehicle.fuelType}" selected>${vehicle.fuelType}</option>`
+    );
     $("#updated-status").val(vehicle.status);
     $("#updated-remarks").val(vehicle.remarks);
 
