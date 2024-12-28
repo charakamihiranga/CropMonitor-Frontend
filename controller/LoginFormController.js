@@ -1,3 +1,4 @@
+import { setUserDataToHeader } from "../assets/js/dashboard.js";
 import { saveJwtTokenToCookie } from "../model/AuthModel.js";
 
 document
@@ -27,6 +28,9 @@ document
 
       // Save token to cookie
       saveJwtTokenToCookie(jwtToken);
+
+      // set user data to dashboard header
+      setUserDataToHeader(data.userFullName, data.role);
 
       // Redirect user
       window.location.href = "index.html";
