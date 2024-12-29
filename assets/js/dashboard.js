@@ -62,6 +62,16 @@ $(document).ready(function () {
     $(".frame-container").attr("src", "view/pages/LogManagementFrame.html");
     setActiveButton("mlog");
   });
+  $("#settings-btn").on("click", function (event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/SettingsFrame.html");
+    setActiveButton("settings");
+  });
+  $("#logout-btn").on("click", function (event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/SettingsFrame.html");
+    setActiveButton("logout");
+  });
 
   // Add more buttons if needed
   $("#home-btn").on("click", function () {
