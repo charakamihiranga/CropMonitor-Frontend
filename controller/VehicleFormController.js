@@ -3,10 +3,10 @@ import {
   addVehicle,
   updateVehicle,
   deleteVehicleById,
-  getVehicleById
+  getVehicleById,
 } from "../model/VehicleModel.js";
 import { getStaff, getStaffById } from "../model/StaffModel.js";
-import { formatName } from "../assets/js/util.js";
+import { formatName, setupModal } from "../assets/js/util.js";
 $(document).ready(() => {
   let ascending = true;
   let vehicleData = [];
@@ -48,7 +48,7 @@ $(document).ready(() => {
     });
   });
 
-    async function deleteVehicle(vehicleCode) {
+  async function deleteVehicle(vehicleCode) {
     try {
       let response = await deleteVehicleById(vehicleCode);
       if (response.status === 204) {
@@ -64,8 +64,6 @@ $(document).ready(() => {
   // view Vehicle Modal
 
   async function setViewData(vehicle) {
-    
-
     $("#view-vehicle-category").val(vehicle.vehicleCategory || "N/A");
     $("#view-license-plate-number").val(vehicle.licensePlateNumber || "N/A");
     $("#view-fuel-type").html(
@@ -79,12 +77,9 @@ $(document).ready(() => {
     // Handling allocated staff display
 
     const staffById = await getStaffById(vehicle.staffId);
-    
 
     const staffName = staffById
-      ? `${staffById.firstName || ""} ${
-          staffById.lastName || ""
-        }`.trim()
+      ? `${staffById.firstName || ""} ${staffById.lastName || ""}`.trim()
       : "Not Allocated";
     $("#view-allocated-staff").html(
       `<option value="" disabled selected>${staffName}</option>`
@@ -162,7 +157,7 @@ $(document).ready(() => {
   $(document).on("click", "#update-icon", function () {
     const rowIndex = $(this).closest(".table-row").data("index");
     const vehicle = filteredVehicleData[rowIndex];
-    
+
     // Populate modal fields with vehicle data
     $("#updated-vehicle-category").val(vehicle.vehicleCategory);
     $("#updated-license-plate-number").val(vehicle.licensePlateNumber);
@@ -224,7 +219,7 @@ $(document).ready(() => {
         const status = vehicle.status?.toLowerCase() || "";
 
         // Handle staff name more safely, ensure "N/A" is lowercased only once
-        
+
         const staffName = vehicle.staff
           ? `${vehicle.staff.firstName || ""} ${
               vehicle.staff.lastName || ""
@@ -312,37 +307,6 @@ $(document).ready(() => {
     sortVehicles("status");
   });
 
-  // Setup modal functionality
-  function setupModal(modalSelector, triggerSelector, closeSelector) {
-    const $modal = $(modalSelector);
-    const $modalContent = $modal.find(".popup-modal");
-
-    $(triggerSelector).on("click", () => {
-      $modal.removeClass("hidden opacity-0");
-      setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-    });
-
-    $(closeSelector).on("click", () => closeModal());
-
-    $modal.on("click", (e) => {
-      if ($(e.target).is($modal)) closeModal();
-    });
-
-    function closeModal() {
-      $modal.addClass("opacity-0");
-      $modalContent.addClass("scale-95");
-      setTimeout(() => $modal.addClass("hidden"), 300);
-    }
-
-    return {
-      open: () => {
-        $modal.removeClass("hidden opacity-0");
-        setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-      },
-      close: closeModal,
-    };
-  }
-
   function clearFields() {
     $(
       "#vehicle-category, #license-plate-number, #fuel-type, #status, #allocated-staff, #remarks"
@@ -359,5 +323,4 @@ $(document).ready(() => {
 
   // initial function call
   getAllVehicles();
-  
 });

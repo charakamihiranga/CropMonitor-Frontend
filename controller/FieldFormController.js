@@ -4,10 +4,9 @@ import {
   getAllFields,
   deleteFieldByCode,
   getFieldByCode,
-  updateFieldByCode
+  updateFieldByCode,
 } from "../model/FieldModel.js";
-import { base64ToFile } from "../assets/js/util.js";
-
+import { base64ToFile, setupModal } from "../assets/js/util.js";
 
 $(document).ready(function () {
   const addFieldModal = setupModal(
@@ -111,19 +110,16 @@ $(document).ready(function () {
       updatedStaffIds.push($(this).data("staffid"));
     });
 
-
     let image1 = $("#up-image-1")[0].files[0];
 
     let image2 = $("#up-image-2")[0].files[0];
 
     if (!image1) {
-     image1 = base64ToFile(field.fieldImage1, "fieldImage1.jpg");
-      
+      image1 = base64ToFile(field.fieldImage1, "fieldImage1.jpg");
     }
 
     if (!image2) {
-    image2 = base64ToFile(field.fieldImage2, "fieldImage2.jpg");
-      
+      image2 = base64ToFile(field.fieldImage2, "fieldImage2.jpg");
     }
 
     let updatedField = new FormData();
@@ -148,8 +144,6 @@ $(document).ready(function () {
       alert("An unexpected error occurred. Please try again.");
     }
   }
-
-
 
   async function deleteField(fieldCode, fieldName) {
     viewFieldModel.close();
@@ -379,38 +373,6 @@ $(document).ready(function () {
       console.error("Error loading staff data:", error);
       alert("Error loading staff data. Please try again.");
     }
-  }
-
-  // Setup modal functionality
-  function setupModal(modalSelector, triggerSelector, closeSelector) {
-    const $modal = $(modalSelector);
-    const $modalContent = $modal.find(".popup-modal");
-
-    $(triggerSelector).on("click", () => {
-      $modal.removeClass("hidden opacity-0");
-      setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-    });
-
-    $(closeSelector).on("click", () => closeModal());
-
-    $modal.on("click", (e) => {
-      if ($(e.target).is($modal)) closeModal();
-    });
-
-    function closeModal() {
-      clearFields();
-      $modal.addClass("opacity-0");
-      $modalContent.addClass("scale-95");
-      setTimeout(() => $modal.addClass("hidden"), 300);
-    }
-
-    return {
-      open: () => {
-        $modal.removeClass("hidden opacity-0");
-        setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-      },
-      close: closeModal,
-    };
   }
 
   // Staff badge management
