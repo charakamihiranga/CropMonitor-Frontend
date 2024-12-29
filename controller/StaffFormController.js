@@ -4,7 +4,7 @@ import {
   updateStaffMember,
   deleteStaffMember,
 } from "../model/StaffModel.js";
-import { formatName } from "../assets/js/util.js";
+import { formatName, setupModal } from "../assets/js/util.js";
 
 $(document).ready(() => {
   // Variables to track sorting and staff data
@@ -324,34 +324,5 @@ $(document).ready(() => {
     ).val("");
   }
 
-  // Setup modal functionality
-  function setupModal(modalSelector, triggerSelector, closeSelector) {
-    const $modal = $(modalSelector);
-    const $modalContent = $modal.find(".popup-modal");
-
-    $(triggerSelector).on("click", () => {
-      $modal.removeClass("hidden opacity-0");
-      setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-    });
-
-    $(closeSelector).on("click", () => closeModal());
-
-    $modal.on("click", (e) => {
-      if ($(e.target).is($modal)) closeModal();
-    });
-
-    function closeModal() {
-      $modal.addClass("opacity-0");
-      $modalContent.addClass("scale-95");
-      setTimeout(() => $modal.addClass("hidden"), 300);
-    }
-
-    return {
-      open: () => {
-        $modal.removeClass("hidden opacity-0");
-        setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-      },
-      close: closeModal,
-    };
-  }
+ 
 });

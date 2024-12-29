@@ -1,4 +1,4 @@
-import { base64ToFile } from "../assets/js/util.js";
+import { base64ToFile, setupModal } from "../assets/js/util.js";
 import { getAllCrops, getCropByCode } from "../model/CropModel.js";
 import { getAllFields, getFieldByCode } from "../model/FieldModel.js";
 import { deleteLog, getLogByCode, getLogs, saveLog, updateLog } from "../model/LogModel.js";
@@ -567,40 +567,7 @@ $(document).ready(function () {
     removeAllBadges();
   }
 
-  // Setup modal functionality
-  function setupModal(modalSelector, triggerSelector, closeSelector) {
-    const $modal = $(modalSelector);
-    const $modalContent = $modal.find(".popup-modal");
-
-    $(triggerSelector).on("click", () => {
-      $modal.removeClass("hidden opacity-0");
-      setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-      loadCropDataToDropdown();
-      loadFieldDataToDropdown();
-      loadStaffDataToDropdown();
-    });
-
-    $(closeSelector).on("click", () => closeModal());
-
-    $modal.on("click", (e) => {
-      if ($(e.target).is($modal)) closeModal();
-    });
-
-    function closeModal() {
-      clearFields();
-      $modal.addClass("opacity-0");
-      $modalContent.addClass("scale-95");
-      setTimeout(() => $modal.addClass("hidden"), 300);
-    }
-
-    return {
-      open: () => {
-        $modal.removeClass("hidden opacity-0");
-        setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-      },
-      close: closeModal,
-    };
-  }
+  
 
   // handle file upload preview
   function handleFileUpload(inputId, previewId, containerId) {

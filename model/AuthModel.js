@@ -1,3 +1,5 @@
+import { decodeJwt } from "../assets/js/util.js";
+
 // Get JWT Token from Cookies
 function getJwtTokenFromCookies() {
     const cookies = document.cookie.split('; ');
@@ -16,4 +18,31 @@ function saveJwtTokenToCookie(token) {
     // `max-age=3600` means the token will expire in 1 hour.
 }
 
-export{ getJwtTokenFromCookies, saveJwtTokenToCookie}
+async function checkPasswordValidity(userEmail, userPassword){
+
+    
+    const formData = new FormData();
+    formData.append("email", userEmail);
+    formData.append("password", userPassword);
+
+    // Check if the password is correct
+    return new Promise((resolve) => {
+        $.ajax({
+            url: "http://localhost:8080/cropmonitor/api/v1/auth/login",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function () {
+                resolve(true);
+            },
+            error: function () {
+                resolve(false);
+            },
+        });
+    });
+}
+
+
+
+export{ getJwtTokenFromCookies, saveJwtTokenToCookie, checkPasswordValidity }

@@ -6,7 +6,7 @@ import {
   deleteCropByCode,
   getCropByCode,
 } from "../model/CropModel.js";
-import { base64ToFile } from "../assets/js/util.js";
+import { base64ToFile, setupModal } from "../assets/js/util.js";
 $(document).ready(function () {
   let ascending = true;
   let filteredCrops = [];
@@ -268,37 +268,6 @@ $(document).ready(function () {
       console.error("Error loading field data:", error);
       alert("Error loading field data. Please try again.");
     }
-  }
-
-  // Setup modal functionality
-  function setupModal(modalSelector, triggerSelector, closeSelector) {
-    const $modal = $(modalSelector);
-    const $modalContent = $modal.find(".popup-modal");
-
-    $(triggerSelector).on("click", () => {
-      $modal.removeClass("hidden opacity-0");
-      setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-    });
-
-    $(closeSelector).on("click", () => closeModal());
-
-    $modal.on("click", (e) => {
-      if ($(e.target).is($modal)) closeModal();
-    });
-
-    function closeModal() {
-      $modal.addClass("opacity-0");
-      $modalContent.addClass("scale-95");
-      setTimeout(() => $modal.addClass("hidden"), 300);
-    }
-
-    return {
-      open: () => {
-        $modal.removeClass("hidden opacity-0");
-        setTimeout(() => $modalContent.removeClass("scale-95"), 10);
-      },
-      close: closeModal,
-    };
   }
 
   // File preview functionality
