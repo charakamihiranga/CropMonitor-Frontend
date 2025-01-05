@@ -34,7 +34,7 @@ button.active #logout-icon {
   content: url('../img/menu/Logout.png');
 }
 button.active #settings-icon {
-  content: url('../img/menu/Logout.png');
+  content: url('../img/menu/Settings.png');
 }
 
 

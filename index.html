@@ -83,7 +83,6 @@
               <button
                 id="field-btn"
                 class="flex items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
-                onclick="setActiveButton('field-btn')"
               >
                 <img
                   id="field-icon"
@@ -168,29 +167,29 @@
               >
                 <img
                   id="settings-icon"
-                  src="https://via.placeholder.com/20?text=L"
                   alt="Settings Icon"
                   class="mr-3 w-6 md:w-7 lg:w-8"
                 />
                 <span class="text-xs md:text-sm lg:text-base">Settings</span>
               </button>
             </li>
+            <!-- Logout Button -->
+            <li>
+              <button
+                id="logout-btn"
+                class="flex mt-[12vh] items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
+              >
+                <img
+                  id="logout-icon"
+                  alt="Logout Icon"
+                  class="mr-3 w-6 md:w-7 lg:w-8"
+                />
+                <span class="text-xs md:text-sm lg:text-base poppins-medium"
+                  >Logout</span
+                >
+              </button>
+            </li>
           </ul>
-
-          <button
-            id="logout-btn"
-            class="flex mt-[12vh] items-center w-full text-left py-2 text-gray-700 hover:bg-gray-100 hover:text-[#16a34a] hover:border-l-4 hover:border-gray-300 pl-3 transition-all"
-          >
-            <img
-              id="logout-icon"
-              src="https://via.placeholder.com/20?text=L"
-              alt="Logout Icon"
-              class="mr-3 w-6 md:w-7 lg:w-8"
-            />
-            <span class="text-xs md:text-sm lg:text-base poppins-medium"
-              >Logout</span
-            >
-          </button>
         </nav>
       </aside>
 
@@ -243,7 +242,11 @@
         <!-- Main Content -->
         <main class="flex-1">
           <div class="bg-white h-full">
-            <iframe class="frame-container w-full h-full" title="frame" src="view/pages/HomeFrame.html"></iframe>
+            <iframe
+              class="frame-container w-full h-full"
+              title="frame"
+              src="view/pages/HomeFrame.html"
+            ></iframe>
           </div>
         </main>
       </div>

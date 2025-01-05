@@ -5,14 +5,18 @@ function setActiveButton(buttonId) {
     $(this).removeClass("active");
     var icon = $(this).find("img");
   });
-
+  
   // Set the active button
   var activeButton = $("#" + buttonId + "-btn");
+  
   var activeIcon = activeButton.find("img");
+  
   activeButton.addClass("active"); // Add 'active' class
+  
   if (activeIcon.length) {
     activeIcon.attr("src", activeIcon.data("active")); // Set the active icon
   }
+  
 }
 
 export function setUserDataToHeader(userFullName, userRole) {
