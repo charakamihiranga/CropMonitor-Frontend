@@ -7,7 +7,7 @@ import {
   checkPasswordValidity,
   getJwtTokenFromCookies,
 } from "../model/AuthModel.js";
-import { changeUserPassword } from "../model/UserModel.js";
+import { changeUserPassword, removeUser } from "../model/UserModel.js";
 
 const confirmCodeModal = setupModal(
   "#confirm-code-modal",
@@ -15,9 +15,23 @@ const confirmCodeModal = setupModal(
   "#close-modal"
 );
 
+const confirmDeleteModal = setupModal(
+  "#delete-account-modal",
+  "",
+  "#close-delete-modal"
+);
+
+
 const emailJs_service_id = "";
 const emailJs_template_id = "";
 const emailJs_public_key = "";
+
+function clearFields() {
+  $("#code-input").val("");
+  $("#currentPassword").val("");
+  $("#newPassword").val("");
+  $("#confirmPassword").val("");
+}
 
 $(document).ready(function () {
   $("#change-password-btn").on("click", async function (event) {
@@ -37,13 +51,6 @@ $(document).ready(function () {
       userEmail,
       currentPassword
     );
-    
-    function clearFields() {
-        $("#code-input").val("");
-        $("#currentPassword").val("");
-        $("#newPassword").val("");
-        $("#confirmPassword").val("");
-    }
 
     if (!isPasswordValid) {
       alert("Current password is incorrect. Please try again.");
@@ -90,6 +97,32 @@ $(document).ready(function () {
           );
         }
       }
+    }
+  });
+
+  $("#delete-btn").on("click", async function (e) {
+    e.preventDefault();
+    const password = $("#deleteCurrentPassword").val();
+    const token = getJwtTokenFromCookies();
+    const decodedToken = decodeJwt(token);
+    const userEmail = decodedToken.sub;
+
+    const isPasswordValid = await checkPasswordValidity(userEmail, password);
+
+    if (!isPasswordValid) {
+      alert("Current password is incorrect. Please try again.");
+      return;
+    } else if (isPasswordValid) {
+      confirmDeleteModal.open();
+      $("#btn-delete-account").on("click", async function (event) {
+        const response = await removeUser(userEmail);
+        if (response.status === 204) {
+          alert(response.message);
+          window.top.location.href = "../../login.html";
+        } else {
+          alert(response.message);
+        }
+      });
     }
   });
 });

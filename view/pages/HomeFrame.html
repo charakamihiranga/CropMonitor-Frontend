@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/css/general.css" />
+    <script src="../../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body class="bg-gray-50 poppins-regular">
+    <div class="container mx-auto p-5">
+      <header class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold" id="greeting-txt">Good Morning!</h1>
+          <p class="text-gray-600">
+            Optimize Your Operations with Real Time Insights
+          </p>
+        </div>
+        <div
+          class="flex items-center bg-gray-200 text-gray-800 px-4 py-2 rounded-lg"
+        >
+          <span class="mr-2" id="weather-emoji">☀️</span>
+          <p id="weather-txt">Fetching weather...</p>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Field Map -->
+        <div class="lg:col-span-2 bg-white shadow-lg rounded-lg p-5">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Field Map</h2>
+            <div class="flex space-x-2">
+              <span
+              id="total-hec"
+                class="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full"
+                >0 hectares</span
+              >
+              <span
+                id="field-count"
+                class="bg-yellow-100 text-yellow-700 text-sm px-3 py-1 rounded-full"
+                >0 Fields</span
+              >
+            </div>
+          </div>
+          <div id="map" class="w-full h-80 bg-gray-300 rounded"></div>
+        </div>
+
+        <!-- Crop Summary -->
+        <div class="bg-white shadow-lg rounded-lg p-5 xl:block hidden">
+          <h2 class="text-lg font-semibold mb-4">Crop Types</h2>
+          <canvas id="cropChart" class="w-80 h-80 ml-16"></canvas>
+        </div>
+      </div>
+
+      <!-- Footer Widgets -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <!-- Staff Members -->
+        <div class="bg-white shadow-lg rounded-lg p-5">
+          <h2 class="text-lg font-semibold mb-4 text-center">Staff Members</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              class="bg-green-100 text-center py-6 rounded-lg flex flex-col items-center"
+            >
+              <img
+                src="../../assets/img/Manager.png"
+                alt="Manager Icon"
+                class="mb-4"
+              />
+              <p class="text-5xl font-bold mb-4" id="manager-count">0</p>
+              <p class="text-sm">Managers</p>
+            </div>
+            <div
+              class="bg-green-100 text-center py-6 rounded-lg flex flex-col items-center"
+            >
+              <img
+                src="../../assets/img/Admin Settings Male.png"
+                alt="Administrative Icon"
+                class="mb-4"
+              />
+              <p class="text-5xl font-bold mb-4" id="administrative-count">0</p>
+              <p class="text-sm">Administrative</p>
+            </div>
+            <div
+              class="bg-green-100 text-center py-6 rounded-lg flex flex-col items-center"
+            >
+              <img
+                src="../../assets/img/Scientist Man.png"
+                alt="Scientist Icon"
+                class="mb-4"
+              />
+              <p class="text-5xl font-bold mb-4" id="scientist-count">0</p>
+              <p class="text-sm">Scientists</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicles -->
+        <div class="bg-white shadow-lg rounded-lg p-5">
+          <h2 class="text-lg font-semibold mb-4 text-center">Vehicles</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:h-48 h-auto">
+            <div
+              class="bg-green-100 text-center py-6 rounded-lg flex flex-col items-center justify-center h-full"
+            >
+              <p
+                class="text-6xl sm:text-7xl font-bold mb-2 sm:mb-4"
+                id="available-vehicle-count"
+              >
+                0
+              </p>
+              <p class="text-base sm:text-sm">Available</p>
+            </div>
+            <div
+              class="bg-red-100 text-center py-6 rounded-lg flex flex-col items-center justify-center h-full"
+            >
+              <p
+                class="text-6xl sm:text-7xl font-bold mb-2 sm:mb-4"
+                id="unAvailable-vehicle-count"
+              >
+                0
+              </p>
+              <p class="text-base sm:text-sm">Unavailable</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logs -->
+        <div class="bg-white shadow-lg rounded-lg p-5">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Today Logs</h2>
+            <span
+              id="log-count"
+              class="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full"
+              >0 Logs</span
+            >
+          </div>
+          <div
+            class="space-y-2 overflow-y-auto h-48"
+            id="today-log-container"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../../controller/HomeController.js"></script>
+  </body>
+</html>

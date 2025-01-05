@@ -1,4 +1,3 @@
-import { decodeJwt } from "../assets/js/util.js";
 
 // Get JWT Token from Cookies
 function getJwtTokenFromCookies() {
