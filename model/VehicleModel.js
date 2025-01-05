@@ -118,7 +118,6 @@ export function getVehicleById(vehicleCode){
 }
 
 export function deleteVehicleById(vehicleCode){
-    console.log("deleteVehicleById called:"+vehicleCode);
     
     const token = getJwtTokenFromCookies();
     if (!token) {
@@ -145,4 +144,26 @@ export function deleteVehicleById(vehicleCode){
         }
         return { status: error.status, message: errorMessage };
         });
+}
+
+export function getVehicleAvailabilityCount() {
+  const token = getJwtTokenFromCookies();
+  if (!token) {
+    console.error("JWT token not found in cookies.");
+    return;
+  }
+  return $.ajax({
+    url: `${API_URL}/getAvailabilityCount`,
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    success: function (response) {
+      return response;
+    },
+    error: function (error) {
+      console.error("Error fetching vehicle availability data:", error);
+      throw error;
+    },
+  });
 }

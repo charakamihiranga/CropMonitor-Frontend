@@ -29,10 +29,19 @@ $(document).ready(function () {
     $("#userRole").text(userRole);
   }
 
+  // Load the home page by default when the page loads
+  $(".frame-container").attr("src", "view/pages/HomeFrame.html");
+  setActiveButton("home");
+
+  $("#home-btn").on("click", function (event) {
+    event.preventDefault();
+    $(".frame-container").attr("src", "view/pages/Home.html");
+    setActiveButton("home"); 
+  });
   $("#staff-btn").on("click", function (event) {
     event.preventDefault();
     $(".frame-container").attr("src", "view/pages/StaffManagementFrame.html");
-    setActiveButton("staff"); // Set staff button as active
+    setActiveButton("staff");
   });
   $("#vehicle-btn").on("click", function (event) {
     event.preventDefault();
