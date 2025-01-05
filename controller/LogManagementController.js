@@ -187,7 +187,7 @@ $(document).ready(function () {
         alert("Log saved successfully.");
         addLogModal.close();
         clearFields();
-        getAllCrops();
+        getAllLogs();
       }
     } catch (error) {
       console.error("Error saving log:", error);
