@@ -1,3 +1,11 @@
+import { setupModal } from "./util.js";
+
+const logOutModal = setupModal(
+  "#logout-modal",
+  "#logout-btn",
+  "#close-logout-modal"
+);
+
 // Function to handle active button state
 function setActiveButton(buttonId) {
   // Reset all buttons to inactive state
@@ -25,6 +33,7 @@ export function setUserDataToHeader(userFullName, userRole) {
 }
 
 $(document).ready(function () {
+  
   const userFullName = localStorage.getItem("userFullName");
   const userRole = localStorage.getItem("userRole");
 
@@ -80,10 +89,10 @@ $(document).ready(function () {
     $(".frame-container").attr("src", "view/pages/SettingsFrame.html");
     setActiveButton("settings");
   });
-  $("#logout-btn").on("click", function (event) {
+
+  $("#btn-logout-confirm").on("click", function (event) {
     event.preventDefault();
-    $(".frame-container").attr("src", "view/pages/SettingsFrame.html");
-    setActiveButton("logout");
+    window.top.location.href = "../../login.html";
   });
 
   // Add more buttons if needed
