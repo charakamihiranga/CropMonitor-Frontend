@@ -33,8 +33,8 @@
         <div
           class="flex items-center bg-gray-200 text-gray-800 px-4 py-2 rounded-lg"
         >
-          <span class="mr-2" id="weather-emoji">☀️</span>
-          <p id="weather-txt">Fetching weather...</p>
+          <span class="mr-2 text-2xl" id="weather-emoji">☀️</span>
+          <p id="weather-txt" class="font-medium">Fetching weather...</p>
         </div>
       </header>
 
@@ -46,7 +46,7 @@
             <h2 class="text-lg font-semibold">Field Map</h2>
             <div class="flex space-x-2">
               <span
-              id="total-hec"
+                id="total-hec"
                 class="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full"
                 >0 hectares</span
               >
@@ -57,7 +57,13 @@
               >
             </div>
           </div>
-          <div id="map" class="w-full h-80 bg-gray-300 rounded"></div>
+          <div id="map" class="w-full h-80 bg-gray-300 rounded">
+            <div id="loader" class="flex items-center justify-center h-full">
+              <div
+                class="w-10 h-10 border-4 border-t-4 border-green-500 border-t-transparent rounded-full animate-spin"
+              ></div>
+            </div>
+          </div>
         </div>
 
         <!-- Crop Summary -->

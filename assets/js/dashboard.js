@@ -1,3 +1,11 @@
+import { setupModal } from "./util.js";
+
+const logOutModal = setupModal(
+  "#logout-modal",
+  "#logout-btn",
+  "#close-logout-modal"
+);
+
 // Function to handle active button state
 function setActiveButton(buttonId) {
   // Reset all buttons to inactive state
@@ -5,14 +13,18 @@ function setActiveButton(buttonId) {
     $(this).removeClass("active");
     var icon = $(this).find("img");
   });
-
+  
   // Set the active button
   var activeButton = $("#" + buttonId + "-btn");
+  
   var activeIcon = activeButton.find("img");
+  
   activeButton.addClass("active"); // Add 'active' class
+  
   if (activeIcon.length) {
     activeIcon.attr("src", activeIcon.data("active")); // Set the active icon
   }
+  
 }
 
 export function setUserDataToHeader(userFullName, userRole) {
@@ -21,6 +33,7 @@ export function setUserDataToHeader(userFullName, userRole) {
 }
 
 $(document).ready(function () {
+  
   const userFullName = localStorage.getItem("userFullName");
   const userRole = localStorage.getItem("userRole");
 
@@ -76,10 +89,10 @@ $(document).ready(function () {
     $(".frame-container").attr("src", "view/pages/SettingsFrame.html");
     setActiveButton("settings");
   });
-  $("#logout-btn").on("click", function (event) {
+
+  $("#btn-logout-confirm").on("click", function (event) {
     event.preventDefault();
-    $(".frame-container").attr("src", "view/pages/SettingsFrame.html");
-    setActiveButton("logout");
+    window.top.location.href = "../../login.html";
   });
 
   // Add more buttons if needed
