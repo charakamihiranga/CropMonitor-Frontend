@@ -1,17 +1,12 @@
 import { setUserDataToHeader } from "../assets/js/dashboard.js";
 import { saveJwtTokenToCookie } from "../model/AuthModel.js";
 
-document
-.getElementById("loginForm")
-.addEventListener("submit", async function (event) {
+$("#loginForm").on("submit", async function (event) {
   event.preventDefault(); // Prevent normal form submission
 
   const formData = new FormData();
-  formData.append("email", document.getElementById("username").value);
-  formData.append(
-    "password",
-    document.getElementById("password").value
-  );
+  formData.append("email", $("#username").val());
+  formData.append("password", $("#password").val());
 
   try {
     const response = await fetch(
@@ -29,7 +24,7 @@ document
       // Save token to cookie
       saveJwtTokenToCookie(jwtToken);
 
-      // set user data to dashboard header
+      // Set user data to dashboard header
       setUserDataToHeader(data.userFullName, data.role);
 
       // Redirect user
