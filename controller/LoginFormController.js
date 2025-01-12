@@ -36,3 +36,7 @@ $("#loginForm").on("submit", async function (event) {
     console.error("Error logging in:", error);
   }
 });
+
+$("#signup").on("click", function () {
+  window.location.href = "signup.html";
+});
