@@ -9,6 +9,10 @@ import { getStaff, getStaffById } from "../model/StaffModel.js";
 import { getAllFields, getFieldByCode } from "../model/FieldModel.js";
 import { formatName, setupModal } from "../assets/js/util.js";
 $(document).ready(() => {
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  });
   let ascending = true;
   let equipmentData = [];
   let filteredEquipmentData = [];
@@ -54,10 +58,10 @@ $(document).ready(() => {
       if (response.status === 204) {
         getAllEquipment();
         deleteEquipmentModal.close();
-        alert(response.message);
+        notyf.success(response.message);
       }
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      notyf.error("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -124,13 +128,13 @@ $(document).ready(() => {
     try {
       let response = await addEquipment(equipment);
       if (response.status === 201) {
-        alert(response.message);
+        notyf.success(response.message);
         getAllEquipment();
         addEquipmentModal.close();
         clearFields();
       }
     } catch (error) {
-      alert("An error occurred while adding equipment. Please try again.");
+      notyf.error("An error occurred while adding equipment. Please try again.");
     }
   });
 
@@ -164,7 +168,7 @@ $(document).ready(() => {
         });
       });
     } catch (error) {
-      alert("Error loading staff data. Please try again.");
+      notyf.error("Error loading staff data. Please try again.");
     }
   }
 
@@ -190,7 +194,7 @@ $(document).ready(() => {
         });
       });
     } catch (error) {
-      alert("Error loading field data. Please try again.");
+      notyf.error("Error loading field data. Please try again.");
     }
   }
 
@@ -241,11 +245,11 @@ $(document).ready(() => {
 
         if (response.status === 204) {
           getAllEquipment();
-          alert(response.message);
+          notyf.success(response.message);
           updateEquipmentModal.close();
         }
       } catch (error) {
-        alert(
+        notyf.error(
           "An error occurred while updating the equipment. Please try again."
         );
       }

@@ -8,6 +8,10 @@ import {
 } from "../model/CropModel.js";
 import { base64ToFile, setupModal } from "../assets/js/util.js";
 $(document).ready(function () {
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  });
   let ascending = true;
   let filteredCrops = [];
   const addCrop = setupModal(
@@ -49,11 +53,11 @@ $(document).ready(function () {
         addCrop.close();
         clearFields();
         loadAllCrops();
-        alert(response.message);
+        notyf.success(response.message);
       }
     } catch (error) {
       console.error("Error saving crop data:", error);
-      alert("Error saving crop data. Please try again.");
+      notyf.error("Error saving crop data. Please try again.");
     }
   });
 
@@ -84,7 +88,7 @@ $(document).ready(function () {
       setCropData(filteredCrops); // Populate the table
     } catch (error) {
       console.error("Error loading crop data:", error);
-      alert("Error loading crop data. Please try again.");
+      notyf.error("Error loading crop data. Please try again.");
     } finally {
       $("#loader").hide(); // Hide loader after operation
     }
@@ -209,11 +213,11 @@ $(document).ready(function () {
         viewCrop.close();
         clearFields();
         loadAllCrops(); // Reload the crops after update, but ensure this is only done after the specific crop update
-        alert(response.message);
+        notyf.success(response.message);
       }
     } catch (error) {
       console.error("Error saving crop data:", error);
-      alert("Error saving crop data. Please try again.");
+      notyf.error("Error saving crop data. Please try again.");
     }
   }
 
@@ -222,15 +226,15 @@ $(document).ready(function () {
     try {
       let response = await deleteCropByCode(cropCode);
       if (response.status === 204) {
-        alert(response.message);
+        notyf.success(response.message);
         deletecrop.close();
         loadAllCrops();
       } else {
-        alert(response.message);
+        notyf.error(response.message);
       }
     } catch (error) {
       console.error("Error deleting crop data:", error);
-      alert("Error deleting crop data. Please try again.");
+      notyf.error("Error deleting crop data. Please try again.");
     }
   }
 
@@ -266,7 +270,7 @@ $(document).ready(function () {
       });
     } catch (error) {
       console.error("Error loading field data:", error);
-      alert("Error loading field data. Please try again.");
+      notyf.error("Error loading field data. Please try again.");
     }
   }
 

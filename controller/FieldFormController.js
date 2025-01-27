@@ -9,6 +9,13 @@ import {
 import { base64ToFile, setupModal } from "../assets/js/util.js";
 
 $(document).ready(function () {
+
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  
+  });
+
   const addFieldModal = setupModal(
     "#add-field-modal",
     "#add-field-btn",
@@ -43,7 +50,7 @@ $(document).ready(function () {
     // Fetch field data by code and populate the modal
     const fieldData = await getFieldByCode(fieldCode);
     if (!fieldData) {
-      alert("Field data not found. Please try again.");
+      notyf.error("Field data not found. Please try again.");
       return;
     }
 
@@ -133,15 +140,15 @@ $(document).ready(function () {
     try {
       let response = await updateFieldByCode(field.fieldCode, updatedField);
       if (response.status === 204) {
-        alert(response.message);
+        notyf.success(response.message);
         viewFieldModel.close();
         clearFields();
         setAllFields();
       } else {
-        alert(response.message);
+        notyf.error(response.message);
       }
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      notyf.error("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -153,14 +160,14 @@ $(document).ready(function () {
       let response = await deleteFieldByCode(fieldCode);
       try {
         if (response.status === 204) {
-          alert(response.message);
+          notyf.success(response.message);
           setAllFields();
           delelteFieldModel.close();
         } else {
-          alert(response.message);
+          notyf.error(response.message);
         }
       } catch (error) {
-        alert("An unexpected error occurred. Please try again.");
+        notyf.error("An unexpected error occurred. Please try again.");
       }
     });
   }
@@ -245,7 +252,7 @@ $(document).ready(function () {
       }
     } catch (error) {
       console.error("Error loading fields:", error);
-      alert("Failed to load fields. Please try again.");
+      notyf.error("Failed to load fields. Please try again.");
     }
   }
 
@@ -274,14 +281,14 @@ $(document).ready(function () {
     try {
       let response = await saveField(field);
       if (response.status === 201) {
-        alert(response.message);
+        notyf.success(response.message);
         addFieldModal.close();
         clearFields();
         setAllFields();
       }
     } catch (error) {
       console.error("Error saving field:", error);
-      alert("An unexpected error occurred. Please try again.");
+      notyf.error("An unexpected error occurred. Please try again.");
     }
   });
 
@@ -371,7 +378,7 @@ $(document).ready(function () {
       });
     } catch (error) {
       console.error("Error loading staff data:", error);
-      alert("Error loading staff data. Please try again.");
+      notyf.error("Error loading staff data. Please try again.");
     }
   }
 
