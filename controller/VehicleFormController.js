@@ -8,6 +8,11 @@ import {
 import { getStaff, getStaffById } from "../model/StaffModel.js";
 import { formatName, setupModal } from "../assets/js/util.js";
 $(document).ready(() => {
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  
+  });
   let ascending = true;
   let vehicleData = [];
   let filteredVehicleData = [];
@@ -54,10 +59,10 @@ $(document).ready(() => {
       if (response.status === 204) {
         getAllVehicles();
         deleteVehicleModal.close();
-        alert(response.message);
+        notyf.success(response.message);
       }
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      notyf.error("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -111,13 +116,13 @@ $(document).ready(() => {
     try {
       let response = await addVehicle(vehicle);
       if (response.status === 201) {
-        alert(response.message);
+        notyf.success(response.message);
         getAllVehicles();
         addVehicleModal.close();
         clearFields();
       }
     } catch (error) {
-      alert("An error occurred while adding vehicle. Please try again.");
+      notyf.error("An error occurred while adding vehicle. Please try again.");
     }
   });
 
@@ -150,7 +155,7 @@ $(document).ready(() => {
         });
       });
     } catch (error) {
-      alert("Error loading staff data. Please try again.");
+      notyf.error("Error loading staff data. Please try again.");
     }
   }
   // Update vehicle button click event
@@ -193,11 +198,11 @@ $(document).ready(() => {
 
         if (response.status === 204) {
           getAllVehicles();
-          alert(response.message);
+          notyf.success(response.message);
           updateVehicleModal.close();
         }
       } catch (error) {
-        alert(
+        notyf.error(
           "An error occurred while updating the vehicle. Please try again."
         );
       }

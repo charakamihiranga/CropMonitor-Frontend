@@ -1,6 +1,14 @@
 import { setUserDataToHeader } from "../assets/js/dashboard.js";
 import { saveJwtTokenToCookie } from "../model/AuthModel.js";
 
+$(document).ready(function () {
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  
+  });
+});
+
 $("#loginForm").on("submit", async function (event) {
   event.preventDefault(); // Prevent normal form submission
 
@@ -30,7 +38,7 @@ $("#loginForm").on("submit", async function (event) {
       // Redirect user
       window.location.href = "index.html";
     } else {
-      alert("Login failed. Please check your credentials.");
+      notyf.error("Login failed. Please check your credentials.");
     }
   } catch (error) {
     console.error("Error logging in:", error);

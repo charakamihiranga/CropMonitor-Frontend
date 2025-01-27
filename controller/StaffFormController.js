@@ -7,6 +7,12 @@ import {
 import { formatName, setupModal } from "../assets/js/util.js";
 
 $(document).ready(() => {
+  // notification
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  
+  });
   // Variables to track sorting and staff data
   let ascending = true;
   let staffData = []; // Store all staff data for filtering
@@ -57,15 +63,15 @@ $(document).ready(() => {
       let response = await addStaff(staff);
 
       if (response.status === 201) {
-        alert(response.message); // Success message
+       notyf.success(response.message);
         getAllStaff(); // Refetch staff data
         addStaffModal.close();
         clearFields(); 
       } else if (response.status === 409) {
-        alert(response.message); // Email already exists
+        notyf.error(response.message);
       }
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      notyf.error("An unexpected error occurred. Please try again.");
     }
   });
 
@@ -75,10 +81,10 @@ $(document).ready(() => {
       if (response.status === 204) {
         getAllStaff();
         updateStaffModal.close();
-        alert(response.message);
+        notyf.success(response.message);
       }
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      notyf.error("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -251,10 +257,10 @@ $(document).ready(() => {
       if (response.status === 204) {
         getAllStaff();
         deleteStaffModal.close();
-        alert(response.message);
+        notyf.custom(response.message);
       }
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      notyf.error("An unexpected error occurred. Please try again.");
     }
   }
 

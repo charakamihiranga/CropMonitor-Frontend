@@ -5,6 +5,11 @@ import { deleteLog, getLogByCode, getLogs, saveLog, updateLog } from "../model/L
 import { getStaff, getStaffById } from "../model/StaffModel.js";
 
 $(document).ready(function () {
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  
+  });
   const addLogModal = setupModal(
     "#add-log-modal",
     "#add-log-btn",
@@ -49,7 +54,7 @@ $(document).ready(function () {
       });
     } catch (error) {
       console.error("Error fetching logs:", error);
-      alert("Failed to load logs. Please try again later.");
+      notyf.error("Failed to load logs. Please try again later.");
     }
   }
 
@@ -130,13 +135,13 @@ $(document).ready(function () {
     try {
       const response = await updateLog(logCode, formData);
       if (response.status === 200) {
-        alert("Log updated successfully.");
+        notyf.success("Log updated successfully.");
         viewLogModal.close();
         getAllLogs();
       }
     } catch (error) {
       console.error("Error updating log:", error);
-      alert("Error updating log. Please try again.");
+      notyf.error("Error updating log. Please try again.");
     }
 
   }
@@ -147,13 +152,13 @@ $(document).ready(function () {
       const response = await deleteLog(logCode);
       if (response.status === 204) {
         viewLogModal.close();
-        alert("Log deleted successfully.");
+        notyf.success("Log deleted successfully.");
         deleteModal.close();
         getAllLogs();
       }
     } catch (error) {
       console.error("Error deleting log:", error);
-      alert("Error deleting log. Please try again.");
+      notyf.error("Error deleting log. Please try again.");
     }
   }
 
@@ -184,14 +189,14 @@ $(document).ready(function () {
     try {
       const response = await saveLog(formData);
       if (response.status === 201) {
-        alert("Log saved successfully.");
+        notyf.success("Log saved successfully.");
         addLogModal.close();
         clearFields();
         getAllLogs();
       }
     } catch (error) {
       console.error("Error saving log:", error);
-      alert("Error saving log. Please try again.");
+      notyf.error("Error saving log. Please try again.");
     }
   });
 
@@ -217,7 +222,7 @@ $(document).ready(function () {
       });
     } catch (error) {
       console.error("Error loading crop data:", error);
-      alert("Error loading crop data. Please try again.");
+      notyf.error("Error loading crop data. Please try again.");
     }
   }
 
@@ -241,7 +246,7 @@ $(document).ready(function () {
       });
     } catch (error) {
       console.error("Error loading field data:", error);
-      alert("Error loading field data. Please try again.");
+      notyf.error("Error loading field data. Please try again.");
     }
   }
 
@@ -267,7 +272,7 @@ $(document).ready(function () {
       });
     } catch (error) {
       console.error("Error loading staff data:", error);
-      alert("Error loading staff data. Please try again.");
+      notyf.error("Error loading staff data. Please try again.");
     }
   }
 

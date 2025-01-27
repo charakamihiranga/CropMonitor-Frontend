@@ -9,6 +9,15 @@ import {
 } from "../model/AuthModel.js";
 import { changeUserPassword, removeUser } from "../model/UserModel.js";
 
+$(document).ready(function () {
+  const notyf = new Notyf({
+    duration: 3000,  
+    position: { x: 'right', y: 'top' },  
+  
+  });
+});
+
+
 const confirmCodeModal = setupModal(
   "#confirm-code-modal",
   "#confirm-code-btn",
@@ -53,11 +62,11 @@ $(document).ready(function () {
     );
 
     if (!isPasswordValid) {
-      alert("Current password is incorrect. Please try again.");
+      notyf.error("Current password is incorrect. Please try again.");
       return;
     } else {
       if (newPassword !== confirmPassword) {
-        alert("New password and confirm password do not match.");
+        notyf.error("New password and confirm password do not match.");
         return;
       } else {
         const confirmationCode = generateRandomCode();
@@ -82,17 +91,17 @@ $(document).ready(function () {
                 if (response.status === 204) {
                   clearFields();
                   confirmCodeModal.close();
-                  alert(response.message);
+                  notyf.success(response.message);
                 }
               } catch (error) {
                 console.error("Error changing password", error);
-                alert("Error changing password. Please try again.");
+                notyf.error("Error changing password. Please try again.");
               }
             }
           });
         } catch (error) {
           console.error("Error sending email:", error);
-          alert(
+          notyf.error(
             "Failed to send the confirmation email. Please try again later."
           );
         }
@@ -110,17 +119,17 @@ $(document).ready(function () {
     const isPasswordValid = await checkPasswordValidity(userEmail, password);
 
     if (!isPasswordValid) {
-      alert("Current password is incorrect. Please try again.");
+      notyf.error("Current password is incorrect. Please try again.");
       return;
     } else if (isPasswordValid) {
       confirmDeleteModal.open();
       $("#btn-delete-account").on("click", async function (event) {
         const response = await removeUser(userEmail);
         if (response.status === 204) {
-          alert(response.message);
+          notyf.success(response.message);
           window.top.location.href = "../../login.html";
         } else {
-          alert(response.message);
+          notyf.error(response.message);
         }
       });
     }
