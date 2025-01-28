@@ -257,7 +257,7 @@ $(document).ready(() => {
       if (response.status === 204) {
         getAllStaff();
         deleteStaffModal.close();
-        notyf.custom(response.message);
+        notyf.success(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
