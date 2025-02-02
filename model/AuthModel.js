@@ -17,6 +17,10 @@ function saveJwtTokenToCookie(token) {
     // `max-age=3600` means the token will expire in 1 hour.
 }
 
+function removeJwtTokenFromCookies() {
+    document.cookie = "JWT=; path=/; max-age=0; secure; SameSite=Strict";
+}
+
 async function checkPasswordValidity(userEmail, userPassword){
 
     
@@ -44,4 +48,4 @@ async function checkPasswordValidity(userEmail, userPassword){
 
 
 
-export{ getJwtTokenFromCookies, saveJwtTokenToCookie, checkPasswordValidity }
+export{ getJwtTokenFromCookies, saveJwtTokenToCookie, checkPasswordValidity, removeJwtTokenFromCookies }

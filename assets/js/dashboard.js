@@ -1,3 +1,4 @@
+import { removeJwtTokenFromCookies } from "../../model/AuthModel.js";
 import { setupModal } from "./util.js";
 
 const logOutModal = setupModal(
@@ -92,6 +93,9 @@ $(document).ready(function () {
 
   $("#btn-logout-confirm").on("click", function (event) {
     event.preventDefault();
+    removeJwtTokenFromCookies();
+    localStorage.removeItem("userFullName");
+    localStorage.removeItem("userRole");
     window.top.location.href = "../../login.html";
   });
 
