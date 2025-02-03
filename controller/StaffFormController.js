@@ -72,6 +72,8 @@ $(document).ready(() => {
         clearFields(); 
       } else if (response.status === 409) {
         notyf.error(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -88,6 +90,8 @@ $(document).ready(() => {
         getAllStaff();
         updateStaffModal.close();
         notyf.success(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -264,6 +268,9 @@ $(document).ready(() => {
         getAllStaff();
         deleteStaffModal.close();
         notyf.success(response.message);
+      } else {
+        deleteStaffModal.close();
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -337,7 +344,7 @@ $(document).ready(() => {
   }
 
   function validateStaffForm(staff) {
-    const { firstName, lastName, email, contactNo, gender, dob, role, streetAddress, city, province, country, postalCode, joinedDate } = staff;
+    const { firstName, lastName, email, contactNo, gender, dob, role, streetAddress, city, province, country,  joinedDate } = staff;
     
     // Check for empty fields and basic validation
     if (!firstName || !/^[a-zA-Z]+$/.test(firstName)) {
@@ -374,11 +381,7 @@ $(document).ready(() => {
       notyf.error("Role is required and should contain only letters.");
       return false;
     }
-    
-    if (!streetAddress || !city || !province || !country || !postalCode) {
-      notyf.error("Please fill in the complete address.");
-      return false;
-    }
+  
     
     if (!joinedDate) {
       notyf.error("Joined date is required.");
