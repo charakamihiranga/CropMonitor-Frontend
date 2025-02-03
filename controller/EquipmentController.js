@@ -126,6 +126,9 @@ $(document).ready(() => {
     };
 
     try {
+      if (!validateEquipmentForm(equipment)) {
+        return;
+      }
       let response = await addEquipment(equipment);
       if (response.status === 201) {
         notyf.success(response.message);
@@ -238,6 +241,9 @@ $(document).ready(() => {
       };
 
       try {
+        if (!validateEquipmentForm(updatedEquipment)) {
+          return;
+        }
         const response = await updateEquipment(
           equipment.equipmentId,
           updatedEquipment
@@ -378,6 +384,42 @@ $(document).ready(() => {
       getAllEquipment(searchQuery); // Refetch and filter data based on search term
     }
   });
+
+  function validateEquipmentForm(equipment) {
+    // Extract values from the equipment object
+    const name = equipment.name || "";
+    const type = equipment.type || "";
+    const status = equipment.status || "";
+    const staffId = equipment.staffId || "";
+    const fieldCode = equipment.fieldCode || "";
+  
+    // Reset previous error messages
+    $(".error-message").remove();
+  
+    // Validate the fields and show Notyf error notifications
+    if (!name.trim()) {
+      notyf.error("Equipment name is required.");
+      return false;
+    }
+    if (!type.trim()) {
+      notyf.error("Equipment type is required.");
+      return false;
+    }
+    if (!status.trim()) {
+      notyf.error("Equipment status is required.");
+      return false;
+    }
+    if (!staffId) {
+      notyf.error("Allocated staff is required.");
+      return false;
+    }
+    if (!fieldCode) {
+      notyf.error("Allocated field is required.");
+      return false;
+    }
+  
+    return true;
+  }
 
   // initial function call
   getAllEquipment();
