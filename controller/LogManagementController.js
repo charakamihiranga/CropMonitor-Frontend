@@ -1,14 +1,19 @@
 import { base64ToFile, setupModal } from "../assets/js/util.js";
 import { getAllCrops, getCropByCode } from "../model/CropModel.js";
 import { getAllFields, getFieldByCode } from "../model/FieldModel.js";
-import { deleteLog, getLogByCode, getLogs, saveLog, updateLog } from "../model/LogModel.js";
+import {
+  deleteLog,
+  getLogByCode,
+  getLogs,
+  saveLog,
+  updateLog,
+} from "../model/LogModel.js";
 import { getStaff, getStaffById } from "../model/StaffModel.js";
 
 $(document).ready(function () {
   const notyf = new Notyf({
-    duration: 3000,  
-    position: { x: 'right', y: 'top' },  
-  
+    duration: 3000,
+    position: { x: "right", y: "top" },
   });
   const addLogModal = setupModal(
     "#add-log-modal",
@@ -107,7 +112,7 @@ $(document).ready(function () {
   }
 
   //handle update button click
-  async function handleUpdateLog(logCode, image){
+  async function handleUpdateLog(logCode, image) {
     const observation = $("#view-observation").val();
     let observedImage = $("#update-log-image")[0].files[0];
     const cropCodes = [];
@@ -121,11 +126,11 @@ $(document).ready(function () {
     const staffIds = [];
     $("#view-selected-staff span").each(function () {
       staffIds.push($(this).attr("data-staffId"));
-    }); 
-    if(!observedImage){
+    });
+    if (!observedImage) {
       observedImage = base64ToFile(image);
     }
-    
+
     const formData = new FormData();
     formData.append("observation", observation);
     formData.append("observedImage", observedImage);
@@ -143,9 +148,8 @@ $(document).ready(function () {
       console.error("Error updating log:", error);
       notyf.error("Error updating log. Please try again.");
     }
-
   }
-  
+
   // handle delete button click
   async function handleBtnDelete(logCode) {
     try {
@@ -187,6 +191,9 @@ $(document).ready(function () {
     cropCodes.forEach((cropCode) => formData.append("cropCodes", cropCode));
 
     try {
+      if (!validateFormFields()) {
+        return;
+      }
       const response = await saveLog(formData);
       if (response.status === 201) {
         notyf.success("Log saved successfully.");
@@ -199,8 +206,6 @@ $(document).ready(function () {
       notyf.error("Error saving log. Please try again.");
     }
   });
-
-
 
   // Load crop data into the dropdowns
   async function loadCropDataToDropdown(selectedCropIds = []) {
@@ -572,8 +577,6 @@ $(document).ready(function () {
     removeAllBadges();
   }
 
-  
-
   // handle file upload preview
   function handleFileUpload(inputId, previewId, containerId) {
     $("#" + inputId).on("change", function () {
@@ -588,6 +591,48 @@ $(document).ready(function () {
         reader.readAsDataURL(file);
       }
     });
+  }
+
+  // Helper function to validate form fields
+  function validateFormFields() {
+    let isValid = true;
+
+    // 1. Validate observation text field
+    const observation = $("#observation").val().trim();
+    if (!observation) {
+      notyf.error("Observation field cannot be empty.");
+      isValid = false;
+    }
+
+    // 2. Validate observed image field (image upload)
+    const observedImage = $("#log-image")[0].files[0];
+    if (!observedImage) {
+      notyf.error("Please upload an observation image.");
+      isValid = false;
+    }
+
+    // 3. Validate crop selection (at least one crop should be selected)
+    const selectedCrops = $("#selected-crop span").length;
+    if (selectedCrops === 0) {
+      notyf.error("Please select at least one crop.");
+      isValid = false;
+    }
+
+    // 4. Validate field selection (at least one field should be selected)
+    const selectedFields = $("#selected-field span").length;
+    if (selectedFields === 0) {
+      notyf.error("Please select at least one field.");
+      isValid = false;
+    }
+
+    // 5. Validate staff selection (at least one staff member should be selected)
+    const selectedStaff = $("#selected-staff span").length;
+    if (selectedStaff === 0) {
+      notyf.error("Please select at least one staff member.");
+      isValid = false;
+    }
+
+    return isValid;
   }
 
   handleFileUpload("log-image", "log-preview", "file-upload");
