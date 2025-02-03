@@ -279,12 +279,17 @@ $(document).ready(function () {
     staffIds.forEach((id) => field.append("staffIds", id));
 
     try {
+      if (!validateFieldForm()) {
+        return;
+      }
       let response = await saveField(field);
       if (response.status === 201) {
         notyf.success(response.message);
         addFieldModal.close();
         clearFields();
         setAllFields();
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       console.error("Error saving field:", error);
@@ -523,6 +528,46 @@ $(document).ready(function () {
   // update image handlers
   handleFileUpload("up-image-1", "up-preview-1", "update-image-upload-1");
   handleFileUpload("up-image-2", "up-preview-2", "update-image-upload-2");
+
+  // validate form
+
+  function validateFieldForm() {
+    const fieldName = $("#field-name").val().trim();
+    const fieldSize = parseFloat($("#field-size").val());
+    const latitude = parseFloat($("#latitude").val());
+    const longitude = parseFloat($("#longitude").val());
+    const staffIds = [];
+    
+    // Get selected staff
+    $("#selected-staff span").each(function () {
+      staffIds.push($(this).data("staffid"));
+    });
+  
+    // Check if required fields are filled
+    if (!fieldName) {
+      notyf.error("Field Name is required.");
+      return false;
+    }
+    
+    if (isNaN(fieldSize) || fieldSize <= 0) {
+      notyf.error("Field Size must be a valid positive number.");
+      return false;
+    }
+  
+    if (isNaN(latitude) || isNaN(longitude) || latitude === 0 || longitude === 0) {
+      notyf.error("Please select a valid location on the map.");
+      return false;
+    }
+    
+    if (staffIds.length === 0) {
+      notyf.error("At least one staff member must be selected.");
+      return false;
+    }
+  
+    // All validations passed
+    return true;
+  }
+  
 
   // Initial setup
   loadStaffDataToDropdown();

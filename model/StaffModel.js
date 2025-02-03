@@ -53,6 +53,8 @@ export function addStaff(staffData) {
         "An error occurred while adding staff. Please try again.";
       if (error.status === 409) {
         errorMessage = "Email already exists. Please use a different email.";
+      } else if (error.status === 403) {
+        errorMessage = "Unauthorized: You do not have permission to add staff.";
       } else if (error.responseJSON && error.responseJSON.message) {
         errorMessage = error.responseJSON.message;
       }
@@ -111,6 +113,8 @@ export function updateStaffMember(staffId, updatedStaffObj) {
         errorMessage = "Staff member not found.";
       } else if (error.responseJSON && error.responseJSON.message) {
         errorMessage = error.responseJSON.message;
+      } else if (error.status === 403) {
+        errorMessage = "Unauthorized: You do not have permission to update staff.";
       }
 
       return { status: error.status, message: errorMessage };
@@ -144,6 +148,8 @@ export function deleteStaffMember(staffId) {
         errorMessage = "Staff member not found.";
       } else if (error.responseJSON && error.responseJSON.message) {
         errorMessage = error.responseJSON.message;
+      } else if (error.status === 403) {
+        errorMessage = "Unauthorized: You do not have permission to delete staff.";
       }
 
       return { status: error.status, message: errorMessage };

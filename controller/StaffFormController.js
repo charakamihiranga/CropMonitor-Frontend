@@ -46,11 +46,11 @@ $(document).ready(() => {
       firstName: formatName($("#first-name").val()),
       lastName: formatName($("#last-name").val()),
       email: $("#email").val().toLowerCase(),
-      designation: $("#designation").val().toUpperCase(),
+      designation: $("#designation").val() ? $("#designation").val().toUpperCase() : "",
       contactNo: $("#contact-number").val(),
-      gender: $("#gender").val().toUpperCase(),
+      gender: $("#gender").val() ? $("#gender").val().toUpperCase() : "",
       dob: $("#dob").val(),
-      role: $("#role").val().toUpperCase(),
+      role: $("#role").val() ? $("#role").val().toUpperCase() : "",
       addressLine01: $("#street-address").val(),
       addressLine02: $("#address-line-2").val(),
       addressLine03: $("#city").val(),
@@ -60,6 +60,9 @@ $(document).ready(() => {
     };
 
     try {
+      if (!validateStaffForm(staff)) {
+        return;
+      }
       let response = await addStaff(staff);
 
       if (response.status === 201) {
@@ -69,6 +72,8 @@ $(document).ready(() => {
         clearFields(); 
       } else if (response.status === 409) {
         notyf.error(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -77,11 +82,16 @@ $(document).ready(() => {
 
   async function updateStaff(staffId, updatedStaff) {
     try {
+      if (!validateStaffForm(updatedStaff)) {
+        return;
+      }
       let response = await updateStaffMember(staffId, updatedStaff);
       if (response.status === 204) {
         getAllStaff();
         updateStaffModal.close();
         notyf.success(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -258,6 +268,9 @@ $(document).ready(() => {
         getAllStaff();
         deleteStaffModal.close();
         notyf.success(response.message);
+      } else {
+        deleteStaffModal.close();
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -330,5 +343,53 @@ $(document).ready(() => {
     ).val("");
   }
 
+  function validateStaffForm(staff) {
+    const { firstName, lastName, email, contactNo, gender, dob, role, streetAddress, city, province, country,  joinedDate } = staff;
+    
+    // Check for empty fields and basic validation
+    if (!firstName || !/^[a-zA-Z]+$/.test(firstName)) {
+      notyf.error("First name is required and should contain only letters.");
+      return false;
+    }
+    
+    if (!lastName || !/^[a-zA-Z]+$/.test(lastName)) {
+      notyf.error("Last name is required and should contain only letters.");
+      return false;
+    }
+    
+    if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      notyf.error("Please enter a valid email address.");
+      return false;
+    }
+    
+    if (!contactNo || !/^\+?[0-9]{10,15}$/.test(contactNo)) {
+      notyf.error("Please enter a valid contact number.");
+      return false;
+    }
+    
+    if (!gender || (gender !== "MALE" && gender !== "FEMALE")) {
+      notyf.error("Gender is required and should be either 'Male' or 'Female'.");
+      return false;
+    }
+    
+    if (!dob) {
+      notyf.error("Date of birth is required.");
+      return false;
+    }
+    
+    if (!role || !/^[a-zA-Z]+$/.test(role)) {
+      notyf.error("Role is required and should contain only letters.");
+      return false;
+    }
+  
+    
+    if (!joinedDate) {
+      notyf.error("Joined date is required.");
+      return false;
+    }
+  
+    // If all checks pass
+    return true;
+  }
  
 });

@@ -10,12 +10,11 @@ import {
 import { changeUserPassword, removeUser } from "../model/UserModel.js";
 
 $(document).ready(function () {
-  const notyf = new Notyf({
+   const notyf = new Notyf({
     duration: 3000,  
     position: { x: 'right', y: 'top' },  
   
   });
-});
 
 
 const confirmCodeModal = setupModal(
@@ -134,4 +133,6 @@ $(document).ready(function () {
       });
     }
   });
+});
+
 });

@@ -60,6 +60,8 @@ $(document).ready(() => {
         getAllVehicles();
         deleteVehicleModal.close();
         notyf.success(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -114,12 +116,17 @@ $(document).ready(() => {
     };
 
     try {
+      if (!validateVehicleForm(vehicle)) {
+        return;
+      }
       let response = await addVehicle(vehicle);
       if (response.status === 201) {
         notyf.success(response.message);
         getAllVehicles();
         addVehicleModal.close();
         clearFields();
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An error occurred while adding vehicle. Please try again.");
@@ -191,6 +198,9 @@ $(document).ready(() => {
       };
 
       try {
+        if (!validateVehicleForm(updatedVehicle)) {
+          return;
+        }
         const response = await updateVehicle(
           vehicle.vehicleCode,
           updatedVehicle
@@ -200,6 +210,8 @@ $(document).ready(() => {
           getAllVehicles();
           notyf.success(response.message);
           updateVehicleModal.close();
+        } else {
+          notyf.error(response.message);
         }
       } catch (error) {
         notyf.error(
@@ -325,6 +337,41 @@ $(document).ready(() => {
       getAllVehicles(searchQuery); // Refetch and filter data based on search term
     }
   });
+
+  function validateVehicleForm(vehicle) {
+    // Check if vehicle category is not empty
+    if (!vehicle.vehicleCategory || vehicle.vehicleCategory.trim() === "") {
+      notyf.error("Vehicle Category is required.");
+      return false;
+    }
+  
+    // Check if license plate number is not empty
+    if (!vehicle.licensePlateNumber || vehicle.licensePlateNumber.trim() === "") {
+      notyf.error("License Plate Number is required.");
+      return false;
+    }
+  
+    // Check if fuel type is selected
+    if (!vehicle.fuelType || vehicle.fuelType.trim() === "") {
+      notyf.error("Fuel Type is required.");
+      return false;
+    }
+  
+    // Check if status is selected
+    if (!vehicle.status || vehicle.status.trim() === "") {
+      notyf.error("Status is required.");
+      return false;
+    }
+  
+    // If staff is selected, ensure that it is valid
+    if (vehicle.staffId && vehicle.staffId.trim() === "") {
+      notyf.error("Allocated Staff is required.");
+      return false;
+    }
+  
+    return true; // All fields are valid
+  }
+  
 
   // initial function call
   getAllVehicles();

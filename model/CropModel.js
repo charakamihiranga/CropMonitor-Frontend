@@ -26,6 +26,8 @@ export function saveCrop(crop){
             "An error occurred while saving the crop. Please try again.";
         if (error.status === 400) {
             errorMessage = "Bad request. Please check the provided data.";
+        } else if (error.status === 403) {
+            errorMessage = "Unauthorized: You do not have permission to save crops.";
         } else if (error.responseJSON && error.responseJSON.message) {
             errorMessage = error.responseJSON.message;
         }
@@ -98,6 +100,8 @@ export function deleteCropByCode(cropCode){
             "An error occurred while deleting the crop. Please try again.";
         if (error.status === 404) {
             errorMessage = "Crop not found. Please check the provided crop code.";
+        } else if (error.status === 403) {
+            errorMessage = "Unauthorized: You do not have permission to delete crops.";
         } else if (error.responseJSON && error.responseJSON.message) {
             errorMessage = error.responseJSON.message;
         }
@@ -130,6 +134,8 @@ export function updateCropByCode(cropCode, crop){
             "An error occurred while updating the crop. Please try again.";
         if (error.status === 404) {
             errorMessage = "Crop not found. Please check the provided crop code.";
+        } else if (error.status === 403) {
+            errorMessage = "Unauthorized: You do not have permission to update crops.";
         } else if (error.responseJSON && error.responseJSON.message) {
             errorMessage = error.responseJSON.message;
         }
