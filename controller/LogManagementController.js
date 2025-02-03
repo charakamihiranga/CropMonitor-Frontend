@@ -143,6 +143,8 @@ $(document).ready(function () {
         notyf.success("Log updated successfully.");
         viewLogModal.close();
         getAllLogs();
+      } else {
+        notyf.error("Error updating log. Please try again.");
       }
     } catch (error) {
       console.error("Error updating log:", error);
@@ -159,6 +161,8 @@ $(document).ready(function () {
         notyf.success("Log deleted successfully.");
         deleteModal.close();
         getAllLogs();
+      } else {
+        notyf.error("Error deleting log. Please try again.");
       }
     } catch (error) {
       console.error("Error deleting log:", error);
@@ -200,6 +204,8 @@ $(document).ready(function () {
         addLogModal.close();
         clearFields();
         getAllLogs();
+      } else {
+        notyf.error("Error saving log. Please try again.");
       }
     } catch (error) {
       console.error("Error saving log:", error);
