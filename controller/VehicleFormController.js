@@ -60,6 +60,8 @@ $(document).ready(() => {
         getAllVehicles();
         deleteVehicleModal.close();
         notyf.success(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -123,6 +125,8 @@ $(document).ready(() => {
         getAllVehicles();
         addVehicleModal.close();
         clearFields();
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An error occurred while adding vehicle. Please try again.");
@@ -206,6 +210,8 @@ $(document).ready(() => {
           getAllVehicles();
           notyf.success(response.message);
           updateVehicleModal.close();
+        } else {
+          notyf.error(response.message);
         }
       } catch (error) {
         notyf.error(
