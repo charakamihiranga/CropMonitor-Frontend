@@ -32,6 +32,9 @@ $(document).ready(function () {
 
   // save crop button
   $("#btn-save").on("click", async function () {
+    if(!validateForm()) {
+      return;
+    }
     const cropCommonName = $("#common-name").val();
     const cropScientificName = $("#scientific-name").val();
     const category = $("#category").val();
@@ -300,6 +303,59 @@ $(document).ready(function () {
       loadAllCrops(searchQuery); // Refetch and filter data based on search term
     }
   });
+
+  function validateForm() {
+    const cropCommonName = $("#common-name").val();
+    const cropScientificName = $("#scientific-name").val();
+    const category = $("#category").val();
+    const cropSeason = $("#crop-season").val();
+    const fieldCode = $("#field-dropdown").val();
+    const cropImage = $("#crop-image")[0].files[0];
+  
+    let isValid = true;
+    const errorMessages = [];
+  
+    // Check if required fields are empty
+    if (!cropCommonName.trim()) {
+      isValid = false;
+      errorMessages.push("Crop common name is required.");
+    }
+    if (!cropScientificName.trim()) {
+      isValid = false;
+      errorMessages.push("Crop scientific name is required.");
+    }
+    if (!category.trim()) {
+      isValid = false;
+      errorMessages.push("Category is required.");
+    }
+    if (!cropSeason.trim()) {
+      isValid = false;
+      errorMessages.push("Crop season is required.");
+    }
+    if (!fieldCode) {
+      isValid = false;
+      errorMessages.push("Field selection is required.");
+    }
+    
+    // Check if image is uploaded and valid
+    if (!cropImage) {
+      isValid = false;
+      errorMessages.push("Crop image is required.");
+    } else if (!cropImage.type.startsWith("image/")) {
+      isValid = false;
+      errorMessages.push("Uploaded file must be an image.");
+    }
+  
+    // Display all errors if validation fails
+    if (!isValid) {
+      errorMessages.forEach((message) => {
+        notyf.error(message);  // Use Notyf or any other method to show each error message
+      });
+    }
+  
+    return isValid;
+  }
+  
 
   // initial setup
   loadFieldDataToDropDown();
