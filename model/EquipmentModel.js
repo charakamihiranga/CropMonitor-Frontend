@@ -48,6 +48,8 @@ export function addEquipment(equipmentData) {
       if (error.status === 409) {
         errorMessage =
           "Equipment already exists. Please use a different equipment ID.";
+      } else if (error.status === 403) {
+        errorMessage = "You do not have permission to add equipment.";
       } else if (error.responseJSON && error.responseJSON.message) {
         errorMessage = error.responseJSON.message;
       }
@@ -81,6 +83,8 @@ export function updateEquipment(equipmentId, equipmentObj) {
 
       if (error.status === 404) {
         errorMessage = "Equipment not found.";
+      } else if (error.status === 403) {
+        errorMessage = "You do not have permission to add equipment.";
       } else if (error.responseJSON && error.responseJSON.message) {
         errorMessage = error.responseJSON.message;
       }
@@ -132,6 +136,8 @@ export function deleteEquipmentById(equipmentId) {
         "An error occurred while deleting equipment. Please try again.";
       if (error.status === 404) {
         errorMessage = "Equipment not found.";
+      } else if (error.status === 403) {
+        errorMessage = "You do not have permission to delete equipment.";
       } else if (error.responseJSON && error.responseJSON.message) {
         errorMessage = error.responseJSON.message;
       }

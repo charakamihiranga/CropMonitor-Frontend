@@ -59,6 +59,8 @@ $(document).ready(() => {
         getAllEquipment();
         deleteEquipmentModal.close();
         notyf.success(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An unexpected error occurred. Please try again.");
@@ -135,6 +137,8 @@ $(document).ready(() => {
         getAllEquipment();
         addEquipmentModal.close();
         clearFields();
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       notyf.error("An error occurred while adding equipment. Please try again.");
@@ -253,6 +257,8 @@ $(document).ready(() => {
           getAllEquipment();
           notyf.success(response.message);
           updateEquipmentModal.close();
+        } else {
+          notyf.error(response.message);
         }
       } catch (error) {
         notyf.error(
