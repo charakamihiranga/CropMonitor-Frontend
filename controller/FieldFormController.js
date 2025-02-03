@@ -288,6 +288,8 @@ $(document).ready(function () {
         addFieldModal.close();
         clearFields();
         setAllFields();
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       console.error("Error saving field:", error);
