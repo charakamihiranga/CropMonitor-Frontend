@@ -57,6 +57,8 @@ $(document).ready(function () {
         clearFields();
         loadAllCrops();
         notyf.success(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       console.error("Error saving crop data:", error);
@@ -217,6 +219,8 @@ $(document).ready(function () {
         clearFields();
         loadAllCrops(); // Reload the crops after update, but ensure this is only done after the specific crop update
         notyf.success(response.message);
+      } else {
+        notyf.error(response.message);
       }
     } catch (error) {
       console.error("Error saving crop data:", error);
